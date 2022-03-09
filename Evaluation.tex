@@ -1,10 +1,71 @@
 \chapter{Evaluation}
 \label{chap:evaluation}
 
-This will depend entirely on what you did in \ref{chap:methods}
-
 \section{Results and Analyses}
-What did you find?
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/memUsageCKKS.eps}
+        \caption{CKKS Encryption Scheme}
+        \label{fig:CKKS Memory Usage}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/memUsageMeKKS.eps}
+        \caption{MeKKS Encryption Scheme}
+        \label{fig:MeKKS Memory Usage}
+    \end{subfigure}
+    \caption{Memory Usage of Encrypted Frames}
+    \label{fig:Memory Usage}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/accuracy.eps}
+    \caption{Inference Accuracy by Encryption Type}
+    \label{fig:Inference Accuracy}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/packingTimes.eps}
+        \caption{Packing}
+        \label{fig:Packing Times}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/unpackingTimes.eps}
+        \caption{Unpacking}
+        \label{fig:Unpacking Times}
+    \end{subfigure}
+    \caption{Packing and Unpacking Times}
+    \label{fig:Packing and Unpacking}
+\end{figure}
+
+\begin{figure}[h] 
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/packingPieCharts.eps}
+        \caption{Packing}
+        \label{fig:Packing Pie}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/unpackingPieCharts.eps}
+        \caption{Unpacking}
+        \label{fig:Unpacking Pie}
+    \end{subfigure}
+    \caption{Operations Performed During Packing and Unpacking}
+    \label{fig:Packing Pie Charts}
+\end{figure}
 
 
 \section{Discussion}
