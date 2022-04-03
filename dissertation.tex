@@ -28,10 +28,10 @@
 % Font settings
 %
 \usepackage[T1]{fontenc}	% Activate Type 1 fonts
-\usepackage{mathptmx}       % Use Times font, also for math
+% \usepackage{mathptmx}       % Use Times font, also for math
 \usepackage[scaled]{helvet} % for sans serif fonts (\textsf{...} or \sffamiliy)
 \usepackage{sectsty}        % Change section and chapter header
-%\allsectionsfont{\usefont{T1}{phv}{bc}{n}\selectfont} % Set chapter/section header to narrow helvectica (arial-like)
+\allsectionsfont{\usefont{T1}{phv}{bc}{n}\selectfont} % Set chapter/section header to narrow helvectica (arial-like)
 %\usepackage[scaled]{luximono} % for monospaced fonts (\texttt{...} or \ttfamily)
 
 
@@ -42,7 +42,7 @@
 \usepackage[utf8]{inputenc} % We want æøå
 \usepackage{amsmath}
 \usepackage{amsfonts}
-\usepackage[mathcal]{euscript} % For calligraphy fonts
+% \usepackage[mathcal]{euscript} % For calligraphy fonts
 \usepackage{booktabs}       % Publication quality tables
 \usepackage{setspace}       % Easy setting of line spacing
 \usepackage{forloop}		% For-loops!
@@ -59,9 +59,16 @@
 %\setlength\epigraphrule{0pt} %remove line in quote
 \usepackage{textcomp}
 \usepackage{sidecap} %for figure caption on the side
-\usepackage{enumitem} % for possibility to adjust item left margin indentation
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage[inline]{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{siunitx}
+\usepackage{pgf-umlcd}
+
+\newcommand\myheading[1]{\hspace{-1em}\textbf{#1}\\}
 
 \usepackage{titlesec} %fix header fonts
 \titleformat{\title}[display]
@@ -76,6 +83,9 @@
 \titleformat{\subsection}
   {\normalfont\rmfamily\Large\bfseries\color{black}}
   {\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+{\normalfont\rmfamily\bfseries\color{black}}
+{\thesubsubsection}{1em}{\quad}
 
 
 %
@@ -166,17 +176,6 @@
 %Cause all references in bibtex file to appear in the 'References' section, even
 %if they are not explicitly cite'ed in the document
 %\nocite{*}
-
-%Set the fontsize and baselineskip, if something other than 10 or 12 is required
-\ifDownscaledFinalDoc
-	\fontsize{\TextSize}{\BaseLineSkip}
-	\selectfont
-\fi
-
-%Double line spacing for draft
-\ifDraft
-	\doublespacing
-\fi
 
 \renewcommand{\familydefault}{\sfdefault} %KD
 

@@ -3,7 +3,7 @@
 
 \section{Motivation}
 \label{sec:motivation}
-\setlength{\leftskip}{0.5cm}
+\setlength{\leftskip}{0.25cm}
 \indent \indent
 In the modern world, computers have improved almost every aspect of our lives. Recently, home security has become the latest target of the technology revolution. Companies like Ring \cite{RING} and Eufy \cite{EUFY} offer IoT devices like doorbells and cameras to allow their customers to monitor their property 24/7. On top of traditional surveillance, these companies also provide software solutions to monitor the footage recorded by their devices and interpret it. For example, a doorbell may recognise who is at the front door and allow them to enter, or alert the user to the presence of a stranger if it doesn't. However, the computational intensity of these inferences means footage must be transferred from the devices to more powerful servers.
 \smallskip \\ \indent
@@ -18,7 +18,7 @@ More specifically, is it possible to extract the moving objects from a frame of 
 
 \section{Related Work}
 \label{sec:relatedWork}
-\setlength{\leftskip}{0.5cm}
+\setlength{\leftskip}{0.25cm}
 \indent \indent
 The lack of privacy caused by constant surveillance is not a new concern. There have been many attempts at solving video inference in the encrypted domain, but none are without flaws. For example, in 2013, Chu et al.\ \cite{Chu} proposed an encryption scheme that supports real-time moving object detection, but this was quickly shown to suffer from information leakage, leaving it vulnerable to chosen-plaintext attacks\footnote{ A \textit{chosen-plaintext attack} is a scenario in which an adversary can encrypt plaintexts of their choosing, and analyse the corresponding ciphertext in an attempt to break the encryption. }. Similarly, in 2017, Lin et al.\ \cite{Lin} proposed a different encryption scheme to achieve the same goal by only encrypting some of the bits in each pixel, but this is unprotected against steganographic\footnote{\textit{Steganography} describes the technique of information hiding. Like cryptography, steganography attempts to prevent adversaries from reading messages. Unlike cryptography, where the existence of a message is known but its contents are not, steganography attempts to hide the message's existence.} attacks. Therefore, while research has been able to solve the weaknesses in privacy, it is yet to offer a solution that also preserves security against adversaries directly attacking the encryption, making them useless to real-world applications.
 \smallskip \\ \indent
@@ -31,7 +31,7 @@ It appears that the most prevailing explanation for this lack of research is HE'
 
 \section{Aims and Contributions}
 \label{sec:aimsAndContributions}
-\setlength{\leftskip}{0.5cm}
+\setlength{\leftskip}{0.25cm}
 \indent \indent
 This dissertation documents the design and implementation of a potential solution to the questions posed in §\ref{sec:motivation}, while attempting to follow the constraints restricting the aforementioned real-world systems. In particular, the contribution of the work is:
 \begin{itemize}
