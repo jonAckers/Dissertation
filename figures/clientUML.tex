@@ -1,0 +1,169 @@
+\begin{tikzpicture}
+    \begin{class}[text width=7cm]{Interface}{-3.5,10}
+        \attribute{+ width : integer}
+        \attribute{+ height : integer}
+        \attribute{+ host : string}
+        \attribute{+ port : integer}
+        \attribute{+ videoFile : string}
+        \attribute{+ encMethod : EncryptionType}
+        \attribute{+ infMethod : InferenceType}
+        \attribute{+ encOptions : List[string]}
+        \attribute{+ infOptions : List[string]}
+        \attribute{+ client : Client}
+
+        \operation{+ build () : None}
+        \operation{+ handleExecute () : None}
+        \operation{+ handleUpload () : None}
+        \operation{+ saveVideo () : None}
+        \operation{+ playVideo () : None}
+        \operation{+ activateInferenceOptions () : None}
+        \operation{+ disableInferenceOptions () : None}
+        \operation{+ start () : None}
+    \end{class}
+
+
+    \begin{class}[text width=7cm]{Client}{-3.5,-2}
+        \attribute{+ host : string}
+        \attribute{+ port : integer}
+        \attribute{+ encType : EncryptionType}
+        \attribute{+ infType : InferenceType}
+        \attribute{+ numFrames : integer}
+        \attribute{+ frameRate : float}
+        \attribute{+ initialVideo : List[integer]}
+        \attribute{+ resultVideo : List[integer]}
+        \attribute{+ connectionController : Connection}
+        
+        \operation{+ run (List[integer]) : None}
+        \operation{+ getVideo () : List[integer]}
+        \operation{+ getFrameRate () : float}
+    \end{class}
+
+    
+    \begin{abstractclass}[text width=8cm]{Connection}{-3.2,-11}
+        \attribute{+ host : string}
+        \attribute{+ port : integer}
+        \attribute{+ infType : InferenceType}
+        \attribute{+ numFrames : integer}
+        \attribute{+ initialVideo : List[integer]}
+
+        \operation{\textit{+ sendVideo (List[integer]) : List[integer]}}
+        \operation{\textit{+ receiveVideo () : List[integer]}}
+        \operation{\textit{+ prepareRow (List[integer]) : bytes}}
+        \operation{+ sendMetadata (List[integer]) : Socket}
+        \operation{+ reshapeVideo (List[integer]) : List[integer]}
+    \end{abstractclass}
+
+    
+    \begin{class}[text width=7.5cm]{PlainConnection}{-3,-19}
+        \operation{+ sendVideo (List[integer]) : List[integer]}
+        \operation{+ receiveVideo () : List[integer]}
+        \operation{+ sendMetadata (List[integer]) : None}
+    \end{class}
+
+
+    \begin{class}[text width=7.5cm]{HomomorphicConnection}{8,-3}
+        \attribute{+ encType : EncryptionType}
+        \attribute{+ encController : EncryptionController}
+        
+        \operation{+ sendVideo (List[integer]) : List[integer]}
+        \operation{+ prepareRow (List[integer]) : bytes}
+        \operation{+ receiveVideo () : List[integer]}
+        \operation{+ unpackRow (bytes) : List[integer]}
+        \operation{+ sendMetadata (List[integer]) : None}
+    \end{class}
+
+
+    \begin{interface}[text width=14.5cm]{EncryptionController}{14,-10}
+        \operation{\textit{+ setup (InferenceType) : None}}
+        \operation{\textit{+ getParams () : EncryptionParameters}}
+        \operation{\textit{+ getScale () : integer}}
+        \operation{\textit{+ getRelinKeys () : RelinearizationKeys}}
+        \operation{\textit{+ getPublicKey () : PublicKey}}
+        \operation{\textit{+ getSecretKey () : SecretKey}}
+        \operation{\textit{+ getConstructors () : Tuple (EncryptionContext, Encoder, Encryptor, Decryptor)}}
+    \end{interface}
+
+
+    \begin{class}[text width=11cm]{CKKSEncryption}{8.3,-26}
+        \sethlcolor{ckksRed}
+        \attribute{+ encParams : \hl{EncryptionParameters}}
+        \attribute{+ encScale : integer}
+        \attribute{+ keyGen : \hl{KeyGenerator}}
+        \attribute{+ publicKey : \hl{PublicKey}}
+        \attribute{+ relinKeys : \hl{RelinearizationKeys}}
+
+        \operation{+ setup (InferenceType) : None}
+        \operation{+ getParams () : \hl{EncryptionParameters}}
+        \operation{+ getScale () : integer}
+        \operation{+ getRelinKeys () : \hl{RelinearizationKeys}}
+        \operation{+ getPublicKey () : \hl{PublicKey}}
+        \operation{+ getSecretKey () : \hl{SecretKey}}
+        \operation{+ getConstructors () : Tuple (\hl{SEALContext}, \hl{CKKSEncoder}, \hl{Encryptor}, \hl{Decryptor})}
+    \end{class}
+
+
+    \begin{class}[text width=10.5cm]{MeKKSEncryption}{17,-16}
+        \sethlcolor{mekksBlue}
+        \attribute{+ parameter : \hl{Parameters}}
+        \attribute{+ scale : integer}
+        \attribute{+ keyGen : \hl{KeyGenerator}}
+        \attribute{+ publicKey : \hl{PublicKey}}
+        \attribute{+ secretKey : \hl{SecretKey}}
+        \attribute{+ relinKeys : \hl{PublicKey}}
+
+        \operation{+ setup (InferenceType) : None}
+        \operation{+ getParams () : \hl{Parameters}}
+        \operation{+ getScale () : integer}
+        \operation{+ getRelinKeys () : \hl{PublicKey}}
+        \operation{+ getPublicKey () : \hl{PublicKey}}
+        \operation{+ getSecretKey () : \hl{SecretKey}}
+        \operation{+ contextDummy (\hl{Parameters}) : \hl{Parameters}}
+        \operation{+ getConstructors () : Tuple((\hl{Parameters} -> \hl{Parameters}), \hl{Encoder}, \hl{Encryptor}, \hl{Decryptor})}
+    \end{class}
+
+
+    \begin{package}{Lib}
+        \begin{object}[text width=7cm]{EncryptionType}{12,6}
+            \attribute{PLAIN}
+            \attribute{CKKS}
+            \attribute{MeKKS}
+        \end{object}
+
+
+        \begin{object}[text width=7cm]{InferenceType}{12,3}
+            \attribute{DIFFERENCE}
+            \attribute{MEAN}
+            \attribute{MEDIAN}
+            \attribute{GAUSSIAN}
+            \attribute{GMM}
+        \end{object}
+    \end{package}
+
+    % \begin{scope}[line width=0.8mm]
+    %     \aggregation{Interface}{}{}{Client}
+    %     \path (Interface) -- (Client) node[pos=0.7,right]{\large 1};
+
+    %     \composition{Client}{}{}{Connection}
+    %     \path (Client) -- (Connection) node[pos=0.7,right]{\large 1};
+
+    %     \draw[>=open triangle 60,->] (PlainConnection) to (Connection);
+
+    %     \draw[>=open triangle 60,->] (HomomorphicConnection) to (Connection);
+
+    %     \composition{HomomorphicConnection}{}{}{EncryptionController}
+    %     \path (HomomorphicConnection) -- (EncryptionController) node[pos=0.8, right]{\large 1};
+
+    %     \draw[>=open triangle 60,dashed,->] (EncryptionController) to (CKKSEncryption);
+
+    %     \draw[>=open triangle 60,dashed,->] (EncryptionController) to (MeKKSEncryption);
+
+    %     \unidirectionalAssociation{Client}{}{}{EncryptionType}
+
+    %     \unidirectionalAssociation{Client}{}{}{InferenceType}
+
+    %     \unidirectionalAssociation{Connection}{}{}{InferenceType}
+
+    %     \unidirectionalAssociation{HomomorphicConnection}{}{}{EncryptionType}
+    % \end{scope}
+\end{tikzpicture}
+

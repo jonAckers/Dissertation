@@ -1,0 +1,154 @@
+\begin{tikzpicture}
+    \begin{class}[text width=9.2cm]{ChineseRemainderTheorem}{0,0}
+        \attribute{+ polynomialDegree : integer}
+        \attribute{+ modulus : integer}
+        \attribute{+ primes : List[integer]}
+        \attribute{+ values : List[integer]}
+        \attribute{+ valuesInv : List[integer]}
+        \attribute{+ ntts : List[NumberTheoreticalTransform]}
+
+        \operation{+ generatePrimes (integer, integer, integer) : None}
+        \operation{+ generateNTTs (None) : None}
+        \operation{+ crt (integer) : integer}
+        \operation{+ reconstruct (List[integer]) : integer}
+        \operation{+ isPrime (integer, integer) : boolean}
+    \end{class}
+
+
+    \begin{class}[text width=6.4cm]{Ciphertext}{9, 0}
+        \attribute{+ c0 : Polynomial}
+        \attribute{+ c1 : Polynomial}
+        \attribute{+ encScale : integer}
+        \attribute{+ modulus : integer}
+
+        \operation{+ rescale (integer) : None}
+        \operation{+ scale (integer) : None}
+        \operation{+ parms\_id () : integer}
+        \operation{+ set\_parms (Parameters) : None}
+    \end{class}
+
+
+    \begin{class}[text width=6.5cm]{Decryptor}{9,-6}
+        \attribute{+ polynomialDegree : integer}
+        \attribute{+ crt : ChineseRemainderTheorem}
+        \attribute{+ key : SecretKey}
+
+        \operation{+ decrypt (Ciphertext) : Plaintext}
+    \end{class}
+
+
+    \begin{class}[text width=8cm]{Encoder}{0,-8}
+        \attribute{+ degree : integer}
+        \attribute{+ length : integer}
+        \attribute{+ rotGroup : List[integer]}
+        \attribute{+ roots : List[complex]}
+        \attribute{+ rootsInv : List[complex]}
+
+        \operation{+ encode (integer, integer) : Plaintext}
+        \operation{+ decode (Plaintext) : List[float]}
+        \operation{+ fft (List[complex]) : List[complex]}
+        \operation{+ fftInv (List[complex]) : List[complex]}
+    \end{class}
+
+
+    \begin{class}[text width=6.5cm]{Encryptor}{0,-20}
+        \attribute{+ polynomuialDegree : integer}
+        \attribute{+ coeffModulus : integer}
+        \attribute{+ crt : ChineseRemainderTheorem}
+        \attribute{+ key : PublicKey}
+
+        \operation{+ encrypt (Plaintext) : Ciphertext}
+    \end{class}
+
+
+    % \begin{class}[text width=14.2cm]{Evaluator}{-3,-14}
+    %     \attribute{+ degree : integer}
+    %     \attribute{+ bigMod : integer}
+    %     \attribute{+ crt : ChineseRemainderTheorem}
+    %     \attribute{+ scale : integer}
+    %     \attribute{+ relinKeys : PublicKey}
+
+    %     \operation{+ add (Ciphertext, Ciphertext) : Ciphertext}
+    %     \operation{+ add\_plain (Ciphertext, Plaintext) : Ciphertext}
+    %     \operation{+ sub (Ciphertext, Ciphertext) : Ciphertext}
+    %     \operation{+ sub\_plain (Ciphertext, Plaintext) : Ciphertext}
+    %     \operation{+ multiply (Ciphertext, Ciphertext) : Ciphertext}
+    %     \operation{+ multiply\_plain (Ciphertext, Plaintext) : Ciphertext}
+    %     \operation{+ square (Ciphertext) : Ciphertext}
+    %     \operation{+ relinearise (Polynomial, Polynomial, Polynomial, integer, integer) : Ciphertext}
+    %     \operation{+ differenceFrame (List[Ciphertext], List[Plaintext]) : List[Ciphertext]}
+    %     \operation{+ differenceFrame (List[Ciphertext], List[Ciphertext]) : List[Ciphertext]}
+    %     \operation{+ mod\_switch\_to (Ciphertext, integer) : Ciphertext}
+    %     \operation{+ mod\_switch\_to\_next (Ciphertext) : Ciphertext}
+    %     \operation{+ rescale\_to\_next (Ciphertext) : Ciphertext}
+    % \end{class}
+
+
+    \begin{class}[text width=6.8cm]{KeyGenerator}{0,-14}
+        \attribute{+ parameters : Parameters}
+        \attribute{+ mod : integer}
+        \attribute{+ hammingWeight : integer}
+        \attribute{+ polynomialDegree : integer}
+        \attribute{+ secret : SecretKey}
+
+        \operation{+ generatePublicKey () : PublicKey}
+        \operation{+ generateSecretcKey () : SecretKey}
+        \operation{+ generateRelincKeys () : PublicKey}
+    \end{class}
+
+
+    \begin{class}[text width=3.4cm]{PublicKey}{9, -20}
+        \attribute{+ p0 : Polynomial}
+        \attribute{+ p1 : Polynomial}
+    \end{class}
+
+
+    \begin{class}[text width=3.5cm]{SecretKey}{9, -23}
+        \attribute{+ key : Polynomial}
+    \end{class}
+
+    \begin{class}[text width=8.2cm]{NumberTheoreticalTransform}{18, 0}
+        \attribute{+ degree : integer}
+        \attribute{+ coeffModulus : integer}
+        \attribute{+ roots : List[integer]}
+        \attribute{+ rootsInv : List[integer]}
+        \attribute{+ reversedBits : List[integer]}
+
+        \operation{+ rootOfUnity (integer, integer) : float}
+        \operation{+ fftFwd (List[integer]) : List[integer]}
+        \operation{+ fftInv (List[integer]) : List[integer]}
+        \operation{+ ntt (List[integer], List[integer]) : List[integer]}
+    \end{class}
+
+
+    \begin{class}[text width=6.4cm]{Parameters}{9, -25}
+        \attribute{+ polynomialDegree : integer}
+        \attribute{+ coeffModulus : integer}
+        \attribute{+ scale : integer}
+        \attribute{+ bigModulus : integer}
+        \attribute{+ hammingWeight : integer}
+        \attribute{+ crt : ChineseRemainderTheorem}
+    \end{class}
+
+
+    \begin{class}[text width=4.7cm]{Plaintext}{18,-7}
+        \attribute{+ polynomial : Polynomial}
+        \attribute{+ scale : integer}
+    \end{class}
+
+
+    \begin{class}[text width=12.8cm]{Polynomial}{18,-10}
+        \attribute{+ degree : integer}
+        \attribute{+ coeffs : List[integer]}
+
+        \operation{+ add (Polynomial, integer) : Polynomial}
+        \operation{+ subtract (Polynomial, integer) : Polynomial}
+        \operation{+ multiply (Polynomial, integer) : Polynomial}
+        \operation{+ multiplyCRT (Polynomial, ChineseRemainderTheorem) : Polynomial}
+        \operation{+ multiplyNTT (Polynomial, NumberTheoreticalTransform) : Polynomial}
+        \operation{+ scalarMultiply (intger, integer) : Polynomial}
+        \operation{+ divide (Polynomial) : Polynomial}
+        \operation{+ mod (integer) : Polynomial}
+        \operation{+ modSmall (integer) : Polynomial}
+    \end{class}
+\end{tikzpicture}

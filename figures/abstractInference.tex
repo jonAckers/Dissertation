@@ -1,0 +1,50 @@
+\begin{tikzpicture}
+    \coordinate (Start) at (2.5,14);
+    \coordinate (End) at (6.5,14);
+    \coordinate (aStart) at (10,0);
+    \coordinate (aEnd) at (10,13);
+
+
+    \draw[draw=black,dashed,line width=0.5mm] (0,0) rectangle ++(9,13);
+    \node (Inference) at (4.5,11) [draw,thick,minimum width=7cm,minimum height=2cm,fill=abstractYellow] {\Large\textrm{Inference}};
+    \node (Arithmetic) at (4.5,8) [draw,thick,minimum width=7cm,minimum height=2cm,fill=abstractYellow] {\Large\textrm{Arithmetic}};
+    \node (Circuits) at (4.5,5) [draw,thick,minimum width=7cm,minimum height=2cm,fill=abstractYellow] {\Large\textrm{Boolean Circuits}};
+    \node (Primitives) at (4.5,2) [draw,thick,minimum width=7cm,minimum height=2cm,fill=abstractYellow] {\Large\textrm{Cryptographic Primitives}};
+
+
+    \draw[->,>=stealth,line width=0.8mm] (Start) to ([xshift=-2cm]Inference.north);
+    \draw[->,>=stealth,line width=0.8mm] ([xshift=-2cm]Inference.south) to ([xshift=-2cm]Arithmetic.north);
+    \draw[->,>=stealth,line width=0.8mm] ([xshift=-2cm]Arithmetic.south) to ([xshift=-2cm]Circuits.north);
+    \draw[->,>=stealth,line width=0.8mm] ([xshift=-2cm]Circuits.south) to ([xshift=-2cm]Primitives.north);
+    \draw[->,>=stealth,line width=0.8mm] ([xshift=2cm]Primitives.north) to ([xshift=2cm]Circuits.south);
+    \draw[->,>=stealth,line width=0.8mm] ([xshift=2cm]Circuits.north) to ([xshift=2cm]Arithmetic.south);
+    \draw[->,>=stealth,line width=0.8mm] ([xshift=2cm]Arithmetic.north) to ([xshift=2cm]Inference.south);
+    \draw[->,>=stealth,line width=0.8mm] ([xshift=2cm]Inference.north) to (End);
+    
+    \draw[->,>=stealth,line width=1.2mm] (aStart) to (aEnd) node[rotate=270,sloped,anchor=center,above,xshift=6.5cm] {\large\textrm{Level of Abstraction}};
+
+    % \node (Encryption) at (3,2) [draw,thick,minimum width=4cm,minimum height=2cm,fill=ckksRed] {\Large\textrm{Encryption}};
+    % \node (Decryption) at (9,2) [draw,thick,minimum width=4cm,minimum height=2cm,fill=ckksRed] {\Large\textrm{Decryption}};
+    % \node (GUI) at (6,-1) [draw,thick,minimum width=7cm,minimum height=2cm,fill=ckksRed] {\Large\textrm{Graphical User Interface}};
+    % \node (Client) at (6,5) [draw,thick,minimum width=7cm,minimum height=2cm,fill=ckksRed] {\Large\textrm{Client}};
+
+    % \draw[->,>=stealth,line width=0.6mm] ([xshift=-1cm]Decryption.south) to ([xshift=2cm]GUI.north);
+    % \draw[->,>=stealth,line width=0.6mm] ([xshift=1cm]Encryption.north) to ([xshift=-2cm]Client.south);
+    % \draw[->,>=stealth,line width=0.6mm] ([xshift=2cm]Client.south) to ([xshift=-1cm]Decryption.north);
+
+
+
+    % \draw[draw=black,dashed,line width=0.5mm] (0,10) rectangle ++(12,10);
+    % \node (Server) at (6,12) [draw,thick,minimum width=7cm,minimum height=2cm,fill=ckksRed] {\Large\textrm{Server}};
+    % \node (Inference) at (6,15) [draw,thick,minimum width=7cm,minimum height=2cm,fill=ckksRed] {\Large\textrm{Inference}};
+    % \node (Testing) at (9,18) [draw,thick,minimum width=4cm,minimum height=2cm,fill=mekksBlue] {\Large\textrm{Testing}};
+    % \node (Evaluation) at (3,18) [draw,thick,minimum width=4cm,minimum height=2cm,fill=mekksBlue] {\Large\textrm{Evaluation}};
+
+    % \draw[->,>=stealth,line width=0.6mm] ([xshift=-2cm]Server.north) to ([xshift=-2cm]Inference.south);
+    % \draw[->,>=stealth,line width=0.6mm] ([xshift=2cm]Inference.south) to ([xshift=2cm]Server.north);
+
+
+
+    % \draw[->,>=stealth,line width=0.6mm] ([xshift=-2cm]Client.north) to ([xshift=-2cm]Server.south);
+    % \draw[->,>=stealth,line width=0.6mm] ([xshift=2cm]Server.south) to ([xshift=2cm]Client.north);
+\end{tikzpicture}

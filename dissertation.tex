@@ -46,7 +46,7 @@
 \usepackage{booktabs}       % Publication quality tables
 \usepackage{setspace}       % Easy setting of line spacing
 \usepackage{forloop}		% For-loops!
-\usepackage{float}
+% \usepackage{float}
 \usepackage[dvipsnames]{color}   % named colors
 \usepackage[procnames]{listings} % beautiful listings
 \usepackage{units}				 % semantically represent numbers with units 
@@ -67,6 +67,43 @@
 \usepackage{multirow}
 \usepackage{siunitx}
 \usepackage{pgf-umlcd}
+\renewcommand{\umldrawcolor}{black}
+\usepackage{xcolor, soul}
+\usepackage{tcolorbox}
+\usepackage{dirtree}
+\definecolor{ckksRed}{rgb}{0.9568627451,0.5921568627,0.5568627451}
+\definecolor{mekksBlue}{rgb}{0.4862745098,0.8549019608,0.7960784314}
+\definecolor{homomorphicGreen}{rgb}{0.7921568627,1.,0.7490196078}
+\definecolor{abstractYellow}{rgb}{0.9921568627,0.9490196078,0.8}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows,shadows,positioning,patterns}
+
+\newlength{\upBranch} % shift up the text  lines <<<<
+\setlength{\upBranch}{0.5ex} % 
+
+\newlength{\tolineSpace} % blank space bellow text  lines  <<<
+\setlength{\tolineSpace}{1mm}% 
+
+\usepackage{floatrow}
+
+\usepackage{xpatch} % needed <<<<<<<<
+\makeatletter
+
+\xpatchcmd{\dirtree} % root
+{\vbox{\@nameuse{DT@body@1}}}
+{\raisebox{-\tolineSpace}{\vbox{\@nameuse{DT@body@1}}}}
+{}{}    
+
+\xpatchcmd{\dirtree} % below space
+{\advance\dimen\z@ by-\@nameuse{DT@lastlevel@\the\DT@countiv}\relax}
+{\advance\dimen\z@ by-\tolineSpace \advance\dimen\z@ by-\@nameuse{DT@lastlevel@\the\DT@countiv}\relax}
+{}{}
+    
+\xpatchcmd{\dirtree}% shift up the text  lines
+{\kern\DT@sep\box\z@\endgraf}
+{\kern\DT@sep\raisebox{-\upBranch}{\box\z@}\endgraf}
+{}{} 
 
 \newcommand\myheading[1]{\hspace{-1em}\textbf{#1}\\}
 

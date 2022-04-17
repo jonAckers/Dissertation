@@ -1,0 +1,60 @@
+\DTsetlength{1em}{1em}{0.1em}{0.4pt}{0.4pt}       
+
+\setlength{\DTbaselineskip}{12pt}  % minimum size for \footnotesize 
+\renewcommand{\DTstyle}{\rmfamily\footnotesize}
+
+\dirtree{%
+    .1 .
+    .2 src                                  \DTcomment{\textit{The source-code for the application.}}.
+    .3 client                               \DTcomment{\textit{The client-side source-code.}}.
+    .4 main.py                              \DTcomment{\textit{Entry-point for client-side containg GUI functionality.}}.
+    .4 client.py                            \DTcomment{\textit{Methods for establishing network connection.}}.
+    .4 connection.py                        \DTcomment{\textit{Abstract class providing template for data transmission.}}.
+    .4 plain\_connection.py                 \DTcomment{\textit{Methods for transmitting non-homomorphic data.}}.
+    .4 homomorphic\_connection.py           \DTcomment{\textit{Methods for transmitting homomorphic data.}}.
+    .4 encryption\_controller.py            \DTcomment{\textit{Interface for encryption functionality.}}.
+    .4 ckks\_encryption.py                  \DTcomment{\textit{Methods for CKKS encryption and decryption.}}.
+    .4 mekks\_encryption.py                 \DTcomment{\textit{Methods for MeKKS encryption and decryption.}}.
+    .3 server                               \DTcomment{\textit{The server-side soource-code.}}.
+    .4 server.py                            \DTcomment{\textit{Methods for establishing network connection.}}.
+    .4 connection.py                        \DTcomment{\textit{Abstract class providing template for data transmission.}}.
+    .4 plain\_connection.py                 \DTcomment{\textit{Methods for transmitting non-homomorphic data.}}.
+    .4 homomorphic\_connection.py           \DTcomment{\textit{Methods for transmitting homomorphic data.}}.
+    .4 inference\_controller.py             \DTcomment{\textit{Interface for inference functionality.}}.
+    .4 inference\_engine.py                 \DTcomment{\textit{Abstract class for entry to inference.}}.
+    .4 extended\_evaluator.py               \DTcomment{\textit{Extension of SEAL's CKKS evaluator.}}.
+    .4 plain                                \DTcomment{\textit{The source-code for inference of plain data.}}.
+    .5 inference.py                         \DTcomment{\textit{Controller for targetting inference method.}}.
+    .5 differencing.py                      \DTcomment{\textit{Methods for frame differencing inference.}}.
+    .5 mean.py                              \DTcomment{\textit{Methods for mean filter inference.}}.
+    .5 median.py                            \DTcomment{\textit{Methods for median filter inference.}}.
+    .5 gaussian.py                          \DTcomment{\textit{Methods for Gaussian average inference.}}.
+    .5 gmm.py                               \DTcomment{\textit{Methods for Gaussian mixture model inference.}}.
+    .4 homomorphic                          \DTcomment{\textit{The source-code for inference of HE data}}.
+    .5 inference.py                         \DTcomment{\textit{Controller for targetting inference method.}}.
+    .5 differencing.py                      \DTcomment{\textit{Methods for frame differencing inference.}}.
+    .5 mean.py                              \DTcomment{\textit{Methods for mean filter inference.}}.
+    .5 gaussian.py                          \DTcomment{\textit{Methods for Gaussian average inference.}}.
+    .5 homomorphic\_engine.py               \DTcomment{\textit{Methods for homomorphic operations.}}.
+    .3 lib                                  \DTcomment{\textit{The source-code for helper libraries}}.
+    .4 encryption\_methods.py               \DTcomment{\textit{Enumerated type for available encryption schemes.}}.
+    .4 inference\_methods.py                \DTcomment{\textit{Enumerated type for available inference methods.}}.
+    .4 SEAL-Python                          \DTcomment{\textit{External SEAL library.}}.
+    .4 MeKKS                                \DTcomment{\textit{The source-code for the MeKKS implementation.}}.
+    .5 chinese\_remainder\_theorem.py       \DTcomment{\textit{Methods for the CRT.}}.
+    .5 ciphertext.py                        \DTcomment{\textit{Class for ciphertext objects.}}.
+    .5 decryptor.py                         \DTcomment{\textit{Methods for decrypting data.}}.
+    .5 encoder.py                           \DTcomment{\textit{Methods for encoding data.}}.
+    .5 encryptor.py                         \DTcomment{\textit{Methods for encrypting data.}}.
+    .5 evaluator.py                         \DTcomment{\textit{Methods for evaluating HE circuits.}}.
+    .5 key\_generator.py                    \DTcomment{\textit{Methods for encryption keys.}}.
+    .5 keys.py                              \DTcomment{\textit{Classes for public and private keys.}}.
+    .5 number\_theoretical\_transform.py    \DTcomment{\textit{Methods for the NTT.}}.
+    .5 paramters.py                         \DTcomment{\textit{Class for parameters objects.}}.
+    .5 polynomial.py                        \DTcomment{\textit{Class for polynomial objects.}}.
+    .5 test.py                              \DTcomment{\textit{Unit tests for MeKKS library}}.
+    .5 utils.py                             \DTcomment{\textit{Helper functions.}}.
+    .3 evaluation                           \DTcomment{\textit{Scripts used to collect and analyse data for evaluation.}}.
+    .2 results                              \DTcomment{\textit{Output of application.}}.
+    .2 test-scripts                         \DTcomment{\textit{Scripts for investigating and testing application functionality.}}.
+}

@@ -1,0 +1,8 @@
+\begin{tikzpicture}
+    \node (serialisation) at (0,0) [draw,thick,minimum width=7cm,minimum height=2cm,fill=ckksRed] {\Large\textrm{Serialisation}};
+    \node (compression) at (0,4) [draw,thick,minimum width=7cm,minimum height=2cm,fill=ckksRed] {\Large\textrm{Compression}};
+    \node (encryption) at (0,8) [draw,thick,minimum width=7cm,minimum height=2cm,pattern=north east lines, pattern color=ckksRed] {\Large\textrm{Encryption}};
+
+    \draw[->,>=stealth,line width=1mm] (serialisation) to (compression);
+    \draw[->,>=stealth,line width=1mm] (compression) to (encryption);
+\end{tikzpicture}

@@ -1,0 +1,176 @@
+\begin{tikzpicture}
+        \begin{class}[text width=11cm]{Server}{19,-25}
+            \attribute{+ host : string}
+            \attribute{+ port : integer}
+            \attribute{+ frameHeight : integer}
+            \attribute{+ encType : EncryptionType}
+            \attribute{+ infType : InferenceType}
+            \attribute{+ server : Socket}
+            \attribute{+ inferenceController : InferenceController}
+            \attribute{+ connectionController : Connection}
+
+            \operation{+ start () : None}
+            \operation{+ sendGaussianResults (List[integer], List[integer]) : None}
+        \end{class}
+
+
+        \begin{interface}[text width=7cm]{Connection}{8,0}
+            \attribute{+ server : Socket}
+            \attribute{+ numFrames : integer}
+            
+            \operation{\textit{+ send (List[integer]) : None}}
+            \operation{\textit{+ receiveVideo () : List[integer]}}
+        \end{interface}
+
+
+        \begin{class}[text width=7cm]{HomomorphicConnection}{8,-4}
+            \sethlcolor{homomorphicGreen}
+            \attribute{+ frameHeight : integer}
+            \attribute{+ params : \hl{EncryptionParameters}}
+
+            \operation{+ sendVideo (List[integer]) : None}
+            \operation{+ receiveVideo () : List[integer]}
+            \operation{+ prepareRow (List[intger]) : bytes}
+            \operation{+ unpackData (bytes) : List[intger]}
+        \end{class}
+
+
+        \begin{class}[text width=7cm]{PlainConnection}{0,0}
+            \operation{+ sendVideo (List[integer]) : None}
+            \operation{+ receiveVideo () : List[integer]}
+        \end{class}
+        
+        
+    \begin{package}{Plain}
+        \begin{class}[text width=6.5cm]{PlainController}{0, -5}
+            \attribute{+ infType : InferenceType}
+
+            \operation{+ getMovingObjects (List[integer]) : List[integer]}
+        \end{class}
+
+
+        \begin{class}[text width=5cm]{FrameDifferencing}{0, -7.9}
+            \operation{+ run () : List[integer]}
+        \end{class}
+        
+
+        \begin{class}[text width=5cm]{MeanFilter}{0, -9.5}
+            \operation{+ run () : List[integer]}
+        \end{class}
+
+
+        \begin{class}[text width=5cm]{MedianFilter}{0, -11.05}
+            \operation{+ run () : List[integer]}
+        \end{class}
+        
+
+        \begin{class}[text width=5cm]{GaussianAverage}{0, -12.6}
+            \operation{+ run () : List[integer]}
+        \end{class}
+        
+        
+        \begin{class}[text width=6.2cm]{GaussianMixtureModel}{0, -14.2}
+            \operation{+ run () : List[integer]}
+            \operation{+ getPDF (float, float, float) : float}
+        \end{class}
+    \end{package}
+
+    \begin{package}{Homomorphic}
+        \sethlcolor{homomorphicGreen}
+        \begin{class}[text width=8.3cm]{HomomorphicEngine}{0, -25}
+            \attribute{+ encParams : \hl{EncryptionParameters}}
+            \attribute{+ encScale : integer}
+            \attribute{+ relinKeys : \hl{RelinearizationKeys}}
+            \attribute{+ context : \hl{EncryptionContext}}
+            \attribute{+ encoder : \hl{Encoder}}
+            \attribute{+ evaluator : \hl{Evaluator}}
+
+            \operation{+ getFrame (List[\hl{Ciphertext}]) : List[Ciphertext]}
+            \operation{+ getSolidFrame (integer, Tuple(integer, integer)) : List[\hl{Plaintext}]}
+            \operation{+ setFrameParams (List[\hl{Ciphertext}]) : None}
+        \end{class}
+
+        
+        \begin{class}[text width=10cm]{HomomorphicController}{0, -20}
+            \sethlcolor{homomorphicGreen}
+            \attribute{+ encType : EncryptionType}
+            \attribute{+ infType : InferenceType}
+            \attribute{+ encParams : \hl{EncryptionParameters}}
+            \attribute{+ encScale : integer}
+            \attribute{+ relinKeys : \hl{RelinearizationKeys}}
+
+            \operation{+ getMovingObjects (List[\hl{Ciphertext}]) : List[\hl{Ciphertext}]}
+        \end{class}
+
+
+        \begin{class}[text width=4.5cm]{FrameDifferencing}{-7.6, -34}
+            \operation{+ run () : List[\hl{Ciphertext}]}
+        \end{class}
+
+
+        \begin{class}[text width=9cm]{MeanFilter}{0, -34}
+            \operation{+ run () : List[\hl{Ciphertext}]}
+            \operation{+ getMean (List[\hl{Ciphertext}]) : List[\hl{Ciphertext}]}
+            \operation{+ rescaleFrame (List[\hl{Ciphertext}]) : List[\hl{Ciphertext}]}
+        \end{class}
+
+
+        \begin{class}[text width=7cm]{GaussianAverage}{0, -37}
+            \attribute{+ ALPHA : float}
+            \attribute{+ BETA : float}
+            \attribute{+ m0 : List[\hl{Ciphertext}]}
+            \attribute{+ v0 : List[integer]}
+
+            \operation{+ run () : List[\hl{Ciphertext}]}
+            \operation{+ getMeanAndVariance (List[\hl{Ciphertext}]) : List[\hl{Ciphertext}]}
+        \end{class}
+    \end{package}
+
+    
+
+    \begin{package}{Lib}
+        \begin{object}[text width=7cm]{EncryptionType}{17,0}
+            \attribute{PLAIN}
+            \attribute{CKKS}
+            \attribute{MeKKS}
+        \end{object}
+
+
+        \begin{object}[text width=7cm]{InferenceType}{17,-3}
+            \attribute{DIFFERENCE}
+            \attribute{MEAN}
+            \attribute{MEDIAN}
+            \attribute{GAUSSIAN}
+            \attribute{GMM}
+        \end{object}
+    \end{package}
+        
+        
+    \begin{interface}[text width=8.6cm]{InferenceController}{17, -7.5}
+        \operation{\textit{+ getMovingObjects (List[integer]) : List[integer]}}
+    \end{interface}
+
+    
+    \begin{abstractclass}[text width=7.2cm]{InferenceEngine}{17, -11}
+        \attribute{+ video : List[integer]}
+
+        \operation{\textit{+ run () : List[integer]}}
+        \operation{+ getFrame (List[integer]) : List[integer]}
+    \end{abstractclass}
+
+    
+    \begin{class}[text width=13cm]{ExtendedEvaluator}{20,-16}
+        \sethlcolor{ckksRed}
+        \attribute{+ encScale : integer}
+        \attribute{+ relinKeys : \hl{RelinearizationKeys}}
+
+        \operation{+ multiply\_plain (\hl{Ciphertext}, \hl{Plaintext}) : \hl{Ciphertext}}
+        \operation{+ square (\hl{Ciphertext}) : \hl{Ciphertext}}
+        \operation{+ differenceFrame (List[\hl{Ciphertext}], List[\hl{Plaintext}]) : List[\hl{Ciphertext}]}
+        \operation{+ differenceFrame (List[\hl{Ciphertext}], List[\hl{Ciphertext}]) : List[\hl{Ciphertext}]}
+        \operation{+ multiply\_frame\_plain (List[\hl{Ciphertext}], List[\hl{Plaintext}]) : List[\hl{Ciphertext}]}
+        \operation{+ add\_frame (List[\hl{Ciphertext}], List[\hl{Ciphertext}]) : List[\hl{Ciphertext}]}
+        \operation{+ add\_frame\_plain (List[\hl{Ciphertext}], List[\hl{Plaintext}]) : List[\hl{Ciphertext}]}
+        \operation{+ squareFrame (List[\hl{Ciphertext}]) : List[\hl{Ciphertext}]}
+    \end{class}
+\end{tikzpicture}

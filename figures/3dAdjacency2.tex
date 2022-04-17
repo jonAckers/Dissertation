@@ -1,0 +1,101 @@
+\begin{tikzpicture}
+    \node  (0g) at (1,0,-2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (1g) at (4,0,-2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (2g) at (7,0,-2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (3g) at (1,3,-2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (4g) at (4,3,-2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=homomorphicGreen] {};
+    \node  (5g) at (7,3,-2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (6g) at (1,6,-2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (7g) at (4,6,-2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (8g) at (7,6,-2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+
+
+
+    \node  (0r) at (1,0,0) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (1r) at (4,0,0) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=ckksRed] {};
+    \node  (2r) at (7,0,0) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (3r) at (1,3,0) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=ckksRed] {};
+    \node  (4r) at (4,3,0) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=ckksRed] {};
+    \node  (5r) at (7,3,0) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=ckksRed] {};
+    \node  (6r) at (1,6,0) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (7r) at (4,6,0) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=ckksRed] {};
+    \node  (8r) at (7,6,0) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+
+
+
+    \node  (0b) at (1,0,2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (1b) at (4,0,2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (2b) at (7,0,2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (3b) at (1,3,2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (4b) at (4,3,2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=mekksBlue] {};
+    \node  (5b) at (7,3,2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (6b) at (1,6,2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (7b) at (4,6,2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+    \node  (8b) at (7,6,2.5) [draw,circle,line width=0.3mm,minimum width=0.5cm,fill=lightgray] {};
+
+
+
+    \draw[-,>=stealth,line width=0.5mm]  (4r) to  (1r);
+    \draw[-,>=stealth,line width=0.5mm]  (4r) to  (3r);
+    \draw[-,>=stealth,line width=0.5mm]  (4r) to  (5r);
+    \draw[-,>=stealth,line width=0.5mm]  (4r) to  (7r);
+    \draw[-,>=stealth,line width=0.5mm]  (4r) to  (4b);
+    \draw[-,>=stealth,line width=0.5mm]  (4r) to  (4g);
+
+
+
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (0g) to  (1g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (1g) to  (2g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (3g) to  (4g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (4g) to  (5g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (6g) to  (7g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (7g) to  (8g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (0g) to  (3g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (1g) to  (4g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (2g) to  (5g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (3g) to  (6g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (4g) to  (7g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (5g) to  (8g);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (0r) to  (1r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (1r) to  (2r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (3r) to  (4r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (4r) to  (5r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (6r) to  (7r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (7r) to  (8r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (0r) to  (3r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (1r) to  (4r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (2r) to  (5r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (3r) to  (6r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (4r) to  (7r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (5r) to  (8r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (0b) to  (1b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (1b) to  (2b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (3b) to  (4b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (4b) to  (5b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (6b) to  (7b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (7b) to  (8b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (0b) to  (3b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (1b) to  (4b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (2b) to  (5b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (3b) to  (6b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (4b) to  (7b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (5b) to  (8b);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (0b) to  (0r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (1b) to  (1r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (2b) to  (2r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (3b) to  (3r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (4b) to  (4r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (5b) to  (5r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (6b) to  (6r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (7b) to  (7r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (8b) to  (8r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (0g) to  (0r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (1g) to  (1r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (2g) to  (2r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (3g) to  (3r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (4g) to  (4r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (5g) to  (5r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (6g) to  (6r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (7g) to  (7r);
+    \draw[-,>=stealth,line width=0.5mm,dashed]  (8g) to  (8r);
+\end{tikzpicture}

@@ -1,0 +1,75 @@
+\begin{tikzpicture}
+    \node (aT) at (0,0) [draw,line width=0.5mm,minimum width=6cm,minimum height=4cm] {};
+    \node (aT1) at (-2,-1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i,j-1}$};
+    \node (aT2) at (0,-1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=ckksRed] {\large$p_{i,j}$};
+    \node (aT3) at (2,-1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i,j+1}$};
+    \node (aT4) at (-2,1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=ckksRed] {\large$p_{i-1,j-1}$};
+    \node (aT5) at (0,1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i-1,j}$};
+    \node (aT6) at (2,1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i-1,j+1}$};
+
+    \draw[->,>=stealth,line width=1.5mm] ([xshift=0.5cm,yshift=0.5cm]aT4.south) to ([xshift=-0.5cm,yshift=-0.5cm]aT2.north);
+
+    \node (aB) at (0,-6) [draw,line width=0.5mm,minimum width=4cm,minimum height=4cm] {};
+    \node (aB1) at (-1,-7) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i,j-1}$};
+    \node (aB2) at (1,-7) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i,j+1}$};
+    \node (aB3) at (-1,-5) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i-1,j}$};
+    \node (aB3) at (1,-5) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i-1,j+1}$};
+
+    \draw[-,line width=1.5mm,color=red] ([xshift=-1cm]aB1.north) to ([xshift=-0.925cm]aB2.north);
+    \draw[-,line width=1.5mm,color=red] ([xshift=1cm]aB1.south) to ([xshift=-1cm]aB2.north);
+
+    \draw[->,>=stealth,line width=2mm] ([yshift=-0.25cm]aT.south) to ([yshift=0.25cm]aB.north);
+
+    \node at (0, 3) {\LARGE\textbf{\textrm{L}}};
+
+
+
+
+    \node (bT) at (7,0) [draw,line width=0.5mm,minimum width=6cm,minimum height=4cm] {};
+    \node (bT1) at (5,-1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i,j-1}$};
+    \node (bT2) at (7,-1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=ckksRed] {\large$p_{i,j}$};
+    \node (bT3) at (9,-1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i,j+1}$};
+    \node (bT4) at (5,1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i-1,j-1}$};
+    \node (bT5) at (7,1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=ckksRed] {\large$p_{i-1,j}$};
+    \node (bT6) at (9,1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i-1,j+1}$};
+
+    \draw[->,>=stealth,line width=1.5mm] ([yshift=0.5cm]bT5.south) to ([yshift=-0.5cm]bT2.north);
+
+    \node (bB) at (7,-6) [draw,line width=0.5mm,minimum width=4cm,minimum height=4cm] {};
+    \node (bB1) at (6,-7) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i,j-1}$};
+    \node (bB2) at (8,-7) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i,j+1}$};
+    \node (bB3) at (6,-5) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i-1,j-1}$};
+    \node (bB3) at (8,-5) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i-1,j+1}$};
+
+    \draw[-,line width=1.5mm,color=red] ([xshift=1cm]bB1.south) to ([xshift=-1cm]bB2.north);
+
+    \draw[->,>=stealth,line width=2mm] ([yshift=-0.25cm]bT.south) to ([yshift=0.25cm]bB.north);
+
+    \node at (7, 3) {\LARGE\textbf{\textrm{U}}};
+
+
+
+    \node (cT) at (14,0) [draw,line width=0.5mm,minimum width=6cm,minimum height=4cm] {};
+    \node (cT1) at (12,-1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i,j-1}$};
+    \node (cT2) at (14,-1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=ckksRed] {\large$p_{i,j}$};
+    \node (cT3) at (16,-1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i,j+1}$};
+    \node (cT4) at (12,1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i-1,j-1}$};
+    \node (cT5) at (14,1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm] {\large$p_{i-1,j}$};
+    \node (cT6) at (16,1) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=ckksRed] {\large$p_{i-1,j+1}$};
+
+    \draw[->,>=stealth,line width=1.5mm] ([xshift=-0.5cm,yshift=0.5cm]cT6.south) to ([xshift=0.5cm,yshift=-0.5cm]cT2.north);
+
+    \node (cB) at (14,-6) [draw,line width=0.5mm,minimum width=4cm,minimum height=4cm] {};
+    \node (cB1) at (13,-7) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i,j-1}$};
+    \node (cB2) at (15,-7) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i,j+1}$};
+    \node (cB3) at (13,-5) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i-1,j-1}$};
+    \node (cB3) at (15,-5) [draw,line width=0.25mm,minimum width=2cm,minimum height=2cm,fill=mekksBlue] {\large$p_{i-1,j}$};
+
+    \draw[-,line width=1.5mm,color=red] ([xshift=0.925cm]cB1.north) to ([xshift=1cm]cB2.north);
+    \draw[-,line width=1.5mm,color=red] ([xshift=1cm]cB1.south) to ([xshift=-1cm]cB2.north);
+
+    \draw[->,>=stealth,line width=2mm] ([yshift=-0.25cm]cT.south) to ([yshift=0.25cm]cB.north);
+
+    \node at (14, 3) {\LARGE\textbf{\textrm{R}}};
+    
+\end{tikzpicture}
