@@ -189,6 +189,7 @@ Unfortunately, as a result of the RNS optimisation, $q_l = q_0 \Delta^l$ cannot 
 \setlength{\leftskip}{0cm}
 
 \subsection{MeKKS}
+\label{sec:mekks}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
 Initially, the goal of implementing the CKKS scheme from first principles was to understand further the fundamental mathematical principles that allow it to work. There were little to no expectations of providing a performance improvement for the reasons detailed in §\ref{sec:mekksLimitations}. However, during the implementation phase, it became apparent that there may be some advantages to a specialised HE scheme that can overcome weaknesses found in SEAL during the earlier stages of development.
@@ -240,6 +241,7 @@ Another optimisation came through the specialisation of the library. The project
 
 
 \section{Networking}
+\label{sec:networking}
 \setlength{\leftskip}{0.25cm}
 \indent \indent
 This section is dedicated to detailing the techniques investigated for tackling the networking portion of the project. An established limitation of HE is its impact on memory usage ~\cite{Makkaoui}. Consequently, the \textit{transmission time} of data is significantly impaired. Given a video file, the \textit{transmission time} can be defined by Equation \ref{eq:transmission}.
@@ -369,7 +371,7 @@ Graph-based image processing methods operate on \textit{pixel adjacency graphs}.
     d(v, w) \leq \rho
 \end{equation}
 for all vertices $v$, $w$ in the vertex set.  An example of some pixel adjacency graphs is given by Figure \ref{fig:pixelAdjacency}. When handling video files, three-dimensional pixel adjacency graphs are used to account for relationships between video frames. An example of these is depicted by Figure \ref{fig:3dAdjacency}.
-\begin{figure}[htp]
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.29\textwidth}
         \centering
@@ -392,7 +394,7 @@ for all vertices $v$, $w$ in the vertex set.  An example of some pixel adjacency
     \caption[Pixel Adjacency Graphs]{Pixel adjacency graphs.}
     \label{fig:pixelAdjacency}
 \end{figure}
-\begin{figure}[htp]
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.29\textwidth}
         \centering
@@ -561,7 +563,7 @@ Succinctly depicted by Figure \ref{fig:packingAndUnpacking}, there are three dis
     \label{fig:packingAndUnpacking}
 \end{figure}
 \smallskip \\ \indent
-In the encryption stage, each pixel of a video needs to be encoded and encrypted independently, rather than encrypting the video in a single pass. Consequently, it can be easily broken down into many distinct processes, lending itself well to concurrent computing\footnote{This would fall under concurrency rather than parallelism because objects such as encoders, encryptors, and keys must be shared between processes.}.
+In a na\"ive implementation, each pixel of a video would be encoded and encrypted independently. However, the CKKS scheme operates on vectors of real values. Therefore, breaking a frame down into rows provides the opportunity of \textit{vectorising} the application by encrypting each row of a frame as a single ciphertext object. This has the advantage of reducing the number of ciphertext objects needed – for an $n \times m$ pixel frame, the number of objects is reduced from $nm$ to $n$ - so reduces the memory consumption and significantly improving transmission time\footnote{This would fall under concurrency rather than parallelism because objects such as encoders, encryptors, and keys must be shared between processes.}.
 \smallskip \\ \indent
 Similarly, compressing and serialising subsections of a video rather than the whole video does not change the outcome but has the advantage of being parallelisable. Therefore, once encryption has been complete, these operations can be performed in the same thread, without having any disadvantages of requiring more threads to be created. The functions are only limited in their need for the previous stage to entirely terminate before they can begin. Consequently, the smaller the quantum of data they operate on, the quicker they will finish. However, the same concerns that occur during data transmission also occur here. That is, the overhead of creating threads must be balanced against reducing the decomposition of data.
 
@@ -571,6 +573,7 @@ Similarly, compressing and serialising subsections of a video rather than the wh
 
 
 \section{Inference}
+\label{sec:inference}
 \setlength{\leftskip}{0.25cm}
 \indent \indent
 This section discusses the implementation of the inference models required for moving object detection. It will examine the necessary modifications to support HE video data and detail the more complex algorithms needed for unsupervised learning. Adaptations were required to incorporate the HE Boolean circuits and overcome operation depth limitations. The more straightforward adjustments are summarised in §\ref{sec:adaptations}, and the investigations into GMMs are given a more in-depth presentation in §\ref{sec:OMM} and §\ref{sec:EMAlg}.
@@ -703,6 +706,7 @@ Once the parameters have been updated, the Gaussian most likely produced by the 
 \smallskip \\ \indent
 To achieve this, first, the Gaussians are ordered based on the value of $\frac{\omega}{\Sigma}$. The definitions of $\omega$ and $\Sigma$ mean that this value will increase as both the distribution gains more evidence and the variance decreases. This value will only differ from the last iteration for matching distributions, so the sorting process can be made more efficient. The ordered list can then be iterated over, and the first $B$ distributions are taken as the \textit{background model}, where
 \begin{equation}
+    \label{eq:gmmInequality}
     B = argmin_b \left( \sum^b_{k=1} \omega_k > T \right)
 \end{equation}
 The threshold, $T$, is a measure of how much data should be accounted for. In other words, the best-fitted distributions are taken until a certain portion of recent data has been considered. 
