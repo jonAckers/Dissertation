@@ -1,4 +1,35 @@
 \chapter{Conclusions}
 \label{chap:conclusions}
 
-This Chapter concludes the thesis by summarizing the findings from the study, the contributions and possible limitations of the approach. It can also identify issues that were not solved, or new problems that came up during the work, and suggests possible directions going forward.
+\section{Project Summary}
+\setlength{\leftskip}{0.25cm}
+\indent \indent
+Overall, the project was a success. All core success criteria and one of the extensions were met, and the remaining criteria were thoroughly considered. In its final state, the project contains an investigation into the applicability of HE in ensuring user privacy is preserved when using modern MLaaS surveillance technology. For this, a client-server model allowing data to be homomorphically encrypted using the CKKS scheme and transferred across a network was implemented. Moreover, several background subtraction algorithms were implemented, and more were investigated to attempt to find the limit of HE pertinency. Also, the results of these algorithms were evaluated to compare to traditional algorithms that operate on plaintext data. Furthermore, a bespoke implementation of the CKKS scheme - called MeKKS - was created to increase understanding and highlight opportunities for application-specific optimisations.
+
+\setlength{\leftskip}{0cm}
+
+
+
+
+
+\section{Lessons Learned}
+\setlength{\leftskip}{0.25cm}
+\indent \indent
+Throughout the project, many challenges were faced. The most critical of these challenges was the requirement for research to cultivate the background knowledge of both unsupervised machine learning for image segmentation and HE - neither of which were covered in Tripos content. Specifically concerning HE, lack of documentation regarding scheme applications warranted many hours of literature reviews and deciphering research papers. 
+\smallskip \\ \indent
+Furthermore, computations using machine learning and HE took a long time to execute - particularly when networking was involved. Consequently, debugging and evolving algorithms was a time-consuming process. This made strategic time management even more critical to allow enough time to complete a thorough investigation. However, these challenges did make the project a productive learning experience that will be helpful when exploring other areas of computer science in future or when working on any large projects generally.
+
+\setlength{\leftskip}{0cm}
+
+
+
+
+
+\section{Future Directions}
+\setlength{\leftskip}{0.25cm}
+\indent \indent
+The project encountered two recurring limitations that would benefit from further investigation. Firstly, the memory requirements enforced by HE result in a significant bottleneck during the networking stage of the application. Consequently, the practicality of HE for overcoming privacy concerns in MLaaS models is severely limited. To overcome this, either the number of levels in a ciphertext needed to perform consecutive multiplications will need to be reduced, or more realistically, the impact of adding a new level on the size of a ciphertext must be made more affordable.
+\smallskip \\ \indent
+Secondly, the variety of operations that can be performed on HE ciphertexts must be expanded if more advanced moving object detection algorithms are to be implemented. Even relatively simple operations such as division are lacking from the CKKS scheme, which means either new inference algorithms will need to be developed or the HE schemes will need to be extended to be more supportive.
+
+\setlength{\leftskip}{0cm}
