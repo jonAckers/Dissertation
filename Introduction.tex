@@ -24,7 +24,7 @@ The lack of privacy caused by constant surveillance is not a new concern. There 
 \smallskip \\ \indent
 Likewise, researchers have been investigating inference using HE for many years. In 2012, Graepel et al.\ \cite{Graepel} introduced machine learning in the HE domain. Dowlin et al.\ \cite{Graepel} built upon this when they developed the CryptoNets model for deep learning with HE in 2016. However, deep learning neural networks are considered overly complex for moving-object detection. Instead, GMMs are the most widely used technique for background modelling. There is much less research into this area of unsupervised learning within the HE domain. The best example appears to be when, in 2013, Pathak and Raj \cite{Pathak} proposed a HE implementation of a GMM for audio inference. But there does not seem to be any investigations linking HE and GMMs to video analysis.
 \smallskip \\ \indent
-It appears that the most prevailing explanation for this lack of research is HE's inapplicability to real-time applications, due to its high computational complexity. While this may be true now, it is important to acknowledge that advances in computing capability will reduce the relative difficulty of HE operations. Consequently, more insight into its applicability will become increasingly valuable, as suggested by the trend in the growing popularity of HE research. This dissertation attempts to offer some beginnings to this insight as it attempts to find the constraining limitations of current HE implementations with respect to surveillance.
+It appears that the most prevailing explanation for this lack of research is HE's inapplicability to real-time applications, due to its high computational complexity. While this may be true now, it is important to acknowledge that advances in computing capability will reduce the relative difficulty of HE operations. Consequently, more insight into its applicability will become increasingly valuable, as suggested by the trend in the growing popularity of HE research. This dissertation attempts to offer some beginnings to this insight as it attempts to investigate the limitations of current HE implementations with respect to surveillance.
 
 \setlength{\leftskip}{0cm}
 
@@ -33,14 +33,15 @@ It appears that the most prevailing explanation for this lack of research is HE'
 \label{sec:aimsAndContributions}
 \setlength{\leftskip}{0.25cm}
 \indent \indent
-This dissertation documents the design and implementation of a potential solution to the questions posed in §\ref{sec:motivation}, while attempting to follow the constraints restricting the aforementioned real-world systems. In particular, the contribution of the work is:
+This dissertation documents the design and implementation of a potential solution to the questions posed in §\ref{sec:motivation}, while attempting to follow the constraints impacting the aforementioned real-world systems. In particular, the contribution of the work is:
 \begin{itemize}
-    \item The creation of a client-server application simulating the device-server stack utilised by existing products, allowing secure transmission of video data from client to server and back again after performing inference.
-    \item The use of Microsoft's Secure Encrypted Arithmetic Library (SEAL) \cite{SEAL} to integrate the CKKS HE scheme \cite{CKKS} for encrypting videos while they are away from the client.
+    \item The creation of a client-server application simulating the device-server stack utilised by existing surveillance devices like doorbell cameras, allowing secure transmission of video data from client to server and back again after performing inference.
+    \item The integration of Microsoft's Secure Encrypted Arithmetic Library (SEAL) \cite{SEAL} to allow secure and private inference of videos encrypted using the CKKS HE scheme \cite{CKKS}.
     \item The implementation of a series of algorithms for enabling private and plain inference of video data to extract moving objects by producing a mask that can be applied to videos in the clear by the client.
-    \item An investigation of Gaussian Mixture Models (GMMs) for HE encrypted background subtraction, beginning with the work by Stauffer and Grimson \cite{Stauffer} then moving into more general Expectation-Maximisation GMM algorithms [SOURCE?].
-    \item As an extension, the fabrication of a CKKS implementation from scratch, called MeKKS, based on the Homomorphic Encryption for Arithmetic of Approximate Numbers paper by Cheon et al.\ \cite{CKKS,BootstrappingHEAAN} to improve understanding of HE.
-    \item A demonstration of the efficacy of the above solutions using timing, accuracy, and \textit{(hopefully)} energy usage data to compare inference of CKKS and MeKKS solutions to plain videos, highlighting the advantages of the MeKKS implementation being targeted to this application over the more generic CKKS.
+    \item An investigation into reducing transmission time from the perspectives of reducing memory usage of HE data and increasing the transmission rate between the client and server.
+    \item An investigation of Gaussian Mixture Models (GMMs) for HE encrypted background subtraction, beginning with the work by Stauffer and Grimson \cite{Stauffer} then moving into more general Expectation-Maximisation GMM algorithms \cite{Dempster}.
+    \item As an extension, the implementation of the CKKS scheme from scratch in Python, called MeKKS, based on the Homomorphic Encryption for Arithmetic of Approximate Numbers paper by Cheon et al.\ \cite{CKKS,BootstrappingHEAAN} to improve understanding of HE.
+    \item An evaluation of the efficacy of the above solutions using timing, accuracy, and \textit{(hopefully)} energy usage data to compare inference of CKKS and MeKKS solutions to plain videos, highlighting the advantages of the MeKKS implementation being targeted to this application over the more generic CKKS.
 \end{itemize}
 
 \setlength{\leftskip}{0cm}

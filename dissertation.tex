@@ -1,273 +1,104 @@
-% Settings file
-%
-% This template is based on the UiB PhD thesis template
-%
+% Template for a Computer Science Tripos Part II project dissertation
+\documentclass[12pt,a4paper,twoside,openright]{report}
+\usepackage[pdfborder={0 0 0}]{hyperref}    % turns references into hyperlinks
+\usepackage[margin=25mm]{geometry}  % adjusts page layout
+\usepackage{graphicx}  % allows inclusion of PDF, PNG and JPG images
+\usepackage{verbatim}
+\usepackage{docmute}
 
-\include{settings}	% Document settings file
-
-%
-% We use the book class
-%
-
-\documentclass[12pt,openany]{book}
-
-%
-% The geometry package allows consistent control of page layout
-%
-
-\usepackage[paper = a4paper,         %To be shrunk to 80% when printed
-			twoside,                 %Two-side mode, switches margins on 
-			bindingoffset = 2mm,     %Offset for binding side of page
-			hmargin = 25mm,          %Left and right margin
-			vmargin = 25mm,          %Top and bottom margin
-			dvipdfm]
-			{geometry}
-
-
-%
-% Font settings
-%
-\usepackage[T1]{fontenc}	% Activate Type 1 fonts
-% \usepackage{mathptmx}       % Use Times font, also for math
-\usepackage[scaled]{helvet} % for sans serif fonts (\textsf{...} or \sffamiliy)
-\usepackage{sectsty}        % Change section and chapter header
-\allsectionsfont{\usefont{T1}{phv}{bc}{n}\selectfont} % Set chapter/section header to narrow helvectica (arial-like)
-%\usepackage[scaled]{luximono} % for monospaced fonts (\texttt{...} or \ttfamily)
-
-
-%
-% Packages we need
-%
-\usepackage{graphicx}       % Handles figures
-\usepackage[utf8]{inputenc} % We want æøå
+\usepackage{subcaption}
+\usepackage{multirow}
 \usepackage{amsmath}
 \usepackage{amsfonts}
-% \usepackage[mathcal]{euscript} % For calligraphy fonts
-\usepackage{booktabs}       % Publication quality tables
-\usepackage{setspace}       % Easy setting of line spacing
-\usepackage{forloop}		% For-loops!
-% \usepackage{float}
-\usepackage[dvipsnames]{color}   % named colors
-\usepackage[procnames]{listings} % beautiful listings
-\usepackage{units}				 % semantically represent numbers with units 
-\usepackage[table]{xcolor}
-\usepackage[final]{pdfpages}
-\usepackage[backend=bibtex,maxbibnames=99]{biblatex}
-\addbibresource{Bibliography.bib}
-\usepackage{epigraph}			%for quotation
-\setlength\epigraphwidth{8cm}
-%\setlength\epigraphrule{0pt} %remove line in quote
-\usepackage{textcomp}
-\usepackage{sidecap} %for figure caption on the side
-\usepackage{caption}
-\usepackage{subcaption}
+\usepackage{amssymb}
+\usepackage{soul}
+\usepackage{color}
+\usepackage{tcolorbox}
+\usepackage{floatrow}
+\usepackage{array}
+\usepackage{siunitx}
+\usepackage{pdfpages}
+
+\usepackage[inline]{enumitem}
+
 \usepackage{pifont}
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}
-\usepackage[inline]{enumitem}
-\usepackage[hidelinks]{hyperref}
-\usepackage{amssymb}
-\usepackage{multirow}
-\usepackage{siunitx}
-\usepackage{pgf-umlcd}
-\renewcommand{\umldrawcolor}{black}
-\usepackage{xcolor, soul}
-\usepackage{tcolorbox}
-\usepackage{dirtree}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows,shadows,positioning,patterns}
+
+\newcommand{\probP}{\text{I\kern-0.15em P}}
+\renewcommand{\vec}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand\myheading[1]{\hspace{-1em}\textbf{#1}\\}
+
 \definecolor{ckksRed}{rgb}{0.9568627451,0.5921568627,0.5568627451}
 \definecolor{mekksBlue}{rgb}{0.4862745098,0.8549019608,0.7960784314}
 \definecolor{homomorphicGreen}{rgb}{0.7921568627,1.,0.7490196078}
 \definecolor{abstractYellow}{rgb}{0.9921568627,0.9490196078,0.8}
 
-\usepackage{tikz}
-\usetikzlibrary{shapes.geometric,arrows,shadows,positioning,patterns}
+\raggedbottom                           % try to avoid widows and orphans
+\sloppy
+\clubpenalty1000%
+\widowpenalty1000%
 
-\newlength{\upBranch} % shift up the text  lines <<<<
-\setlength{\upBranch}{0.5ex} % 
+\renewcommand{\baselinestretch}{1.1}    % adjust line spacing to make
+                                        % more readable
 
-\newlength{\tolineSpace} % blank space bellow text  lines  <<<
-\setlength{\tolineSpace}{1mm}% 
-
-\usepackage{floatrow}
-
-\usepackage{xpatch} % needed <<<<<<<<
-\makeatletter
-
-\xpatchcmd{\dirtree} % root
-{\vbox{\@nameuse{DT@body@1}}}
-{\raisebox{-\tolineSpace}{\vbox{\@nameuse{DT@body@1}}}}
-{}{}    
-
-\xpatchcmd{\dirtree} % below space
-{\advance\dimen\z@ by-\@nameuse{DT@lastlevel@\the\DT@countiv}\relax}
-{\advance\dimen\z@ by-\tolineSpace \advance\dimen\z@ by-\@nameuse{DT@lastlevel@\the\DT@countiv}\relax}
-{}{}
-    
-\xpatchcmd{\dirtree}% shift up the text  lines
-{\kern\DT@sep\box\z@\endgraf}
-{\kern\DT@sep\raisebox{-\upBranch}{\box\z@}\endgraf}
-{}{} 
-
-\newcommand\myheading[1]{\hspace{-1em}\textbf{#1}\\}
-
-\usepackage{titlesec} %fix header fonts
-\titleformat{\title}[display]
-  {\normalfont\rmfamily\huge\bfseries\color{black}}
-  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
-\titleformat{\chapter}[display]
-  {\normalfont\rmfamily\huge\bfseries\color{black}}
-  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
-\titleformat{\section}
-  {\normalfont\rmfamily\Large\bfseries\color{black}}
-  {\thesection}{1em}{}
-\titleformat{\subsection}
-  {\normalfont\rmfamily\Large\bfseries\color{black}}
-  {\thesubsection}{1em}{}
-\titleformat{\subsubsection}
-{\normalfont\rmfamily\bfseries\color{black}}
-{\thesubsubsection}{1em}{\quad}
-
-
-%
-% Set fancy page header using fancyhdr package
-% 
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-
-% Ensure that the chapter and section headings are in lowercase
-\setlength{\headheight}{15pt}
-\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
-\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
-
-% Delete current section for header/footer
-\fancyhf{}
-
-% Define header/footer layout
-\fancyhead[LE,RO]{\bfseries\thepage}
-\fancyhead[LO]{\bfseries\rightmark}
-\fancyhead[RE]{\bfseries\leftmark}
-\renewcommand{\headrulewidth}{0.5pt}
-
-% make space for the rule
-\fancypagestyle{plain}{
-	\fancyhead{} %get rid of the headers on plain pages
-	\renewcommand{\headrulewidth}{0pt} % and the line
-}
-\usepackage[font={small,it,rm}]{caption}
-\usepackage{atveryend}
-%\usepackage{thumbs}
-
-
-%
-% Set header height to 30pt to make room for two rows in the header
-% (useful if you have very long chapter names)
-%
-%\headheight 30pt
-
-
-%
-% Include user-defined macros
-%
-\include{macros}
-
-%
-% TeX is very proud of its hyphenation engine, to the point where it 
-% hyphenates _everything_ just to show off.  Increasing penalty for 
-% hyphenation, and increase tolerance for underfull boxes can make 
-% the text easier to read, at the expense of making the text less aligned
-% to the right margin
-%
-\hyphenpenalty=10
-\tolerance=1000
-
-
-% Redefine include command -> input command
-%\renewcommand{\include}{\input}
-
-% Include only these chapters
-%\includeonly{introduction}
-\DefineBibliographyStrings{english}{%
-  bibliography = {References},
-}
-
-
-%
-% Set up the frontpage, with author, title, etc
-%
-%{\fontsize{28}{30}\usefont{OT1}{phv}{bc}{n}\selectfont 
-%{\fontsize{28}{30}\usefont{T1}{phv}{bc}{n}\selectfont Exchange of water masses
-\title{{\fontsize{25}{24}\sffamily\textbf{Privacy-Preserving\\Moving Object Detection}}
-	\author{
-	\large\textbf{Computer Science Tripos - Part II}
-	    \vspace{2em}\\
-	    \large\textbf{\textit{Candidate Number}}
-	    \vspace{4em}\\
-		\includegraphics[width=74mm]{figures/cambridge}\vspace{4em}\\
-		Department of Computer Science and Technology \\
-		University of Cambridge}
-	\huge\date{Friday 13 May, 2022}
-}
-
-
-%====================================================
-%------------------ BEGIN DOCUMENT ------------------
-%====================================================
 \begin{document}
-%Cause all references in bibtex file to appear in the 'References' section, even
-%if they are not explicitly cite'ed in the document
-%\nocite{*}
 
-\renewcommand{\familydefault}{\sfdefault} %KD
+\bibliographystyle{plain}
 
-%--------------------------------------------------------------------------------------------------
-% FRONT MATTER
-%--------------------------------------------------------------------------------------------------
-\maketitle
-\frontmatter
-\normalfont\rmfamily
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FRONT MATTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{empty}
+
+\rightline{\LARGE \textbf{Jonathon Ackers}}
+
+\vspace*{60mm}
+\begin{center}
+	\Huge
+	\noindent\rule[0.5ex]{\linewidth}{1pt}
+	\textbf{Privacy-Preserving\\Moving Object Detection}\\
+	\noindent\rule[0.5ex]{\linewidth}{1pt} \\[7.5mm]
+\end{center}
+\begin{center}
+	\LARGE
+	Computer Science Tripos -- Part II \\[2.5mm]
+	Girton College \\[2.5mm]
+	Friday 13\textsuperscript{th} May, 2022
+\end{center}
+
+
 \include{originality}
 \include{proforma}
+
 \tableofcontents
 \listoffigures
 \listoftables
 
-%--------------------------------------------------------------------------------------------------
-% MAIN MATTER
-%--------------------------------------------------------------------------------------------------
-\mainmatter
 
-%
-% Main chapters
-%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%% MAIN  MATTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{headings}
+
 \include{Introduction} 
 \include{Preparation}
 \include{Implementation}
 \include{Evaluation}
 \include{Conclusions}
-%\include{3Introduction_papers}  % Introduction to the papers
-%\include{4Papers}               % The papers, with cover pages
-%
 
 
-%--------------------------------------------------------------------------------------------------
-% BACK MATTER
-%--------------------------------------------------------------------------------------------------
-{
-	\backmatter
-	
-	%
-	% The bibliography
-	%
-	
-	
-	\Urlmuskip=0mu plus 1mu\relax
-	\printbibliography[title=Bibliography,heading=bibintoc]
-}
-	
-% Appendices
-%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Back Matter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliography{Bibliography}
+
 \appendix
-\include{proposal}             % Appendix A: Something
+\include{proposal}
 
 \end{document}
-

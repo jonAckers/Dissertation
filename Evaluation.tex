@@ -5,7 +5,7 @@
 This chapter evaluates the project's implementation using three main criteria: the extent to which it meets the success criteria detailed in §\ref{sec:requirements},  the applicability of HE to inference algorithms, and its practicality regarding current, real-world surveillance technology. Consequently, the chapter is divided into three sections to tackle each criterion distinctly. Both quantitative and qualitative analysis is used throughout the chapter to analyse the implementation's performance and make predictions about the scope to which the investigation may be extended in future. Unless otherwise specified, the data presented was generated using $32 \times 32$ pixel images from the Moving-MNIST dataset.
 
 \section{Requirements Analysis}
-\begin{table}[ht]
+\begin{table}
     \centering
     \def\arraystretch{1.25}
     \begin{tabular}{|c|c|p{9.6cm}|}
@@ -43,19 +43,25 @@ The success criteria in §\ref{sec:requirements} were split into two categories:
 \indent \indent
 Adapting moving object detection algorithms for the HE domain proved to be the project's biggest challenge. The limited number of operations available, combined with the limited number of applications supported by ciphertexts, means some aspects of inference cannot be recreated. Particular challenges came when trying to implement the median filter and a GMM.
 \smallskip \\ \indent
-However, frame differencing, the mean filter, and the Gaussian average methods of background subtraction were successfully implemented using the techniques described in §\ref{sec:adaptations}. A sample of the results from each of these algorithms running on the Moving-MNIST dataset is provided in Figure \ref{fig:inferenceResults}, and an example of what can be achieved on a more realistic dataset - the LASIESTA dataset - is provided in Figure \ref{fig:lasiestaResults}.
+However, frame differencing, the mean filter, and the Gaussian average methods of background subtraction were successfully implemented using the techniques described in §\ref{sec:adaptations}. A sample of the results from each of these algorithms running on the Moving-MNIST dataset is provided in Figure \ref{fig:mnistInferenceResults}, and an example of what can be achieved on a more realistic dataset - the LASIESTA dataset - is provided in Figure \ref{fig:lasiestaInferenceResults}.
 \begin{figure}
     \centering
-    \input{figures/inferenceResults}
+    \input{figures/mnistInferenceResults}
     \caption{Moving-MNIST Inference Results}
-    \label{fig:inferenceResults}
+    \label{fig:mnistInferenceResults}
+\end{figure}
+\begin{figure}
+    \centering
+    \input{figures/lasiestaInferenceResults}
+    \caption{LASIESTA Inference Results}
+    \label{fig:lasiestaInferenceResults}
 \end{figure}
 \setlength{\leftskip}{0cm}
 \subsection{Online Mixture Model}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
 In the \textit{online mixture model} algorithm detailed in §\ref{sec:OMM}, Equation \ref{eq:gmmInequality} describes how a fitted model can be used to segment an image. However, inequality comparison operators are not provided by the standard CKKS implementation. To solve this, Cheon et al.\ proposed the algorithm in Figure \ref{fig:comparison} ~\cite{Comparison}. Unfortunately, this introduces security concerns. If the ability to compare two HE ciphertexts is added to the system, an attacker\footnote{such as Mallory in §\ref{sec:threatModel}.} could use it to exfiltrate information about the image. For example, with enough comparison operations, they would be able to determine the exact value of each pixel in a frame. Consequently, this algorithm was abandoned to preserve the security of the system.
-\begin{figure}[ht]
+\begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/algorithm1}
     \caption{Homomorphic Comparison Algorithm}
@@ -70,7 +76,7 @@ For the same reason, the median filter could not be implemented. The pixel value
 \setlength{\leftskip}{0.5cm}
 \indent \indent
 The difficulty in implementing this algorithm came from the number of operations that need to be performed across the fitting and predicting stages. Calculating means and covariances repeatedly requires many successive multiplications, requiring many coefficient levels in ciphertexts. Also, like the online mixture model, not all operations are supported by the CKKS scheme. In particular, the algorithm requires several divisions to be performed when updating the Gaussian distributions. Currently, the best solution for this seems to be provided by Cheon et al.\ ~\cite{Comparison}. However, the algorithm, given in Figure \ref{fig:division}, has a minimal domain requiring input values to be between zero and two. Normalising pixel values might provide a method for incorporating this, but the noise induced by HE means inference becomes infeasibly inaccurate
-\begin{figure}[ht]
+\begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/algorithm2}
     \caption{Homomorphic Division Algorithm}
@@ -98,7 +104,7 @@ As described in §\ref{sec:networking}, several methods were investigated to try
 \smallskip \\ \indent
 While these times may appear slow, it is important to remember that surveillance companies rarely stream all video from a device. Cameras will usually contain multiple sensors to determine which video is worth performing inference on to conserve battery life. Consequently, real-time performance is not required.
 
-\begin{figure}[ht]
+\begin{figure}
     \centering
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
@@ -115,7 +121,7 @@ While these times may appear slow, it is important to remember that surveillance
     \label{fig:naivePackingAndUnpackingGraph}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}
     \centering
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
@@ -132,7 +138,7 @@ While these times may appear slow, it is important to remember that surveillance
     \label{fig:packingAndUnpackingGraph}
 \end{figure}
 
-\begin{table}[ht]
+\begin{table}
     \centering
     \def\arraystretch{1.25}
     \resizebox{\textwidth}{!}{%
@@ -182,7 +188,7 @@ Already, this provides good improvements over raw data. However, this can be ext
 \smallskip \\ \indent
 As a result of the above optimisations, the running times for the client and server are summarised by Figure \ref{fig:clientTimeGraph} and Figure \ref{fig:serverTimeGraph} respectively.
 
-\begin{table}[ht]
+\begin{table}
     \centering
     \def\arraystretch{1.25}
     % \resizebox{\textwidth}{!}{%
@@ -206,7 +212,7 @@ As a result of the above optimisations, the running times for the client and ser
     \label{tab:compression}
 \end{table}
 
-\begin{figure}[ht]
+\begin{figure}
     \centering
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
@@ -223,7 +229,7 @@ As a result of the above optimisations, the running times for the client and ser
     \label{fig:compression1}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}
     \centering
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
@@ -240,7 +246,7 @@ As a result of the above optimisations, the running times for the client and ser
     \label{fig:compression2}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}
     \centering
     \begin{subfigure}[t]{0.495\textwidth}
         \centering
@@ -272,7 +278,7 @@ Another area of investigation that must be considered when discussing practicali
 \indent \indent
 The running time for each inference algorithm varies significantly and is severely impacted by the parameters used to tune the accuracy of each algorithm, as discussed in §\ref{sec:adaptations}. Therefore, for this comparison, the parameters were tuned using the CKKS scheme and kept constant for a fair evaluation when testing the MeKKS scheme. The results are depicted by Figure \ref{fig:inferenceTime}. As expected, the CKKS scheme runs much quicker than the MeKKS scheme due to the more optimised implementation.
 
-\begin{figure}[ht]
+\begin{figure}
     \centering
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
@@ -295,7 +301,7 @@ The running time for each inference algorithm varies significantly and is severe
 \indent \indent
 The accuracies of each HE inference algorithm are compared in Figure \ref{fig:accuracy}. The Moving-MNIST dataset allows accuracy to be easily calculated because it only contains white moving objects on a black background. Therefore, the similarity between the inference result and the original video can be determined by calculating the \textit{sum square difference} according to Equation \ref{eq:sumSquareDiff}. From this, the accuracy of each encryption scheme can be compared for each inference method.
 
-\begin{figure}[h!]
+\begin{figure}
     \centering
     \includegraphics[scale=0.8]{figures/accuracy.eps}
     \caption{Inference Accuracy}

@@ -11,7 +11,7 @@ This section is dedicated to detailing the high-level architecture and design of
 \subsection{Framework}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-The project's design began with an abstract framework around which the individual components were designed. Based on the threat model outlined in §\ref{sec:threatModel}, Figure \ref{fig:abstractNetwork} depicts a high-level layout of the core components. The server-side application has been split into two categories: \textit{online} in red and \textit{offline} in blue. Online describes inference being performed directly in response to a request from the client. Offline describes generating inference results on batches of data, independent of the front-end. 
+The project's design began with understanding the MLaaS threat model described in §\ref{sec:threatModel}. Figure \ref{fig:abstractNetwork} depicts a high-level layout of the core components based on this framework. The server-side application has been split into two categories: \textit{online} in red and \textit{offline} in blue. Online describes inference being performed directly in response to a request from the client. Offline describes generating inference results on batches of data, independent of the front-end. 
 \begin{itemize}
     \item The online components are where most of this dissertation's discussion occurs. This portion of the application is responsible for emulating the MLaaS model. The \textit{GUI} allows users to select the encryption scheme and inference method used. The user's video is then passed to the \textit{encryption} component, responsible for encrypting data using the selected scheme - either CKKS or MeKKS in the current implementation. The resulting encrypted data is then passed through the \textit{client} to the \textit{server}. In the \textit{inference} component, the received data is privately analysed, and a video containing only the moving objects is returned to the \textit{client} via the \textit{server}. The \textit{decryption} component must then decrypt the inference results and the video played for the user.
     \item The offline components are intended for use before the application is deployed. The framework's \textit{testing} component refers to developing and refining the inference algorithms used to extract moving objects. The \textit{evaluation} component encompasses the process of evaluating the application, including both inference performance and client-server activity.
@@ -22,7 +22,8 @@ Figure \ref{fig:abstractInference} provides a deeper insight into the compositio
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
         \scalebox{0.5}{\input{figures/abstractNetwork}}
-        \caption{The project components.}
+        \captionsetup{justification=centering}
+        \caption[Project Components]{The project components.\medskip\\Online:\sethlcolor{ckksRed} \hl{\quad\quad\quad\quad}\smallskip\\Offline:\sethlcolor{mekksBlue} \hl{\quad\quad\quad\quad}}
         \label{fig:abstractNetwork}
     \end{subfigure}%
     \begin{subfigure}[b]{0.5\textwidth}
@@ -58,7 +59,7 @@ The application can be split into four layers of abstraction, from the high-leve
 \subsection{Class Structure}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-This section provides a more verbose insight into the project's structure. Figure \ref{fig:clientUML} details the arrangement of the client-side, Figure \ref{fig:serverUML} contains the classes composing the server-side, and Figure \ref{fig:mekksUML} depicts the structure of the MeKKS library. While there is overlap in these class diagrams, they have been separated into three figures for the sake of clarity.
+This section provides a more thorough insight into the project's structure. Figure \ref{fig:clientUML} details the arrangement of the client-side, Figure \ref{fig:serverUML} contains the classes composing the server-side, and Figure \ref{fig:mekksUML} depicts the structure of the MeKKS library. While there is overlap in these class diagrams, they have been separated into three figures for the sake of clarity.
 
 \begin{figure}[htp]
     \centering
@@ -201,7 +202,7 @@ Initially, the goal of implementing the CKKS scheme from first principles was to
 \indent \indent
 The primary limitation of MeKKS was the language used for implementation. Traditionally, encryption schemes are written in C or C++ because they are lower-level than most languages, so they run more efficiently. Consequently, the more computationally expensive operations (such as the multiplications between large prime numbers required by CKKS, detailed above) would run much quicker than in Python. 
 \smallskip \\ \indent
-Another limitation was the number of optimisations that could be applied. Since the focus of the implementation was on understanding, the implementation began with the foundational CKKS scheme. However, since this scheme was released, many optimisations have been produced. For example, using residue number systems, bootstrapping extensions, or reduced approximation error ~\cite{RNS,BootstrappingHEAAN, RAE}. The opportunities for developing MeKKS are limitless. However, it was essential to define a clear endpoint for the implementation for the sake of scheduling the project and the inflexible final deadline. Therefore, the performance expectations compared to SEAL - which has had years of development from a team of experts - were further bounded.
+Another limitation was the number of optimisations that could be applied. Since the focus of the implementation was on understanding, the implementation began with the foundational CKKS scheme. However, since this scheme was released, many optimisations have been produced. For example, using residue number systems, bootstrapping extensions, or reduced approximation error ~\cite{RNS,BootstrappingHEAAN, RAE}. The opportunities for developing MeKKS are extensive. However, it was essential to define a clear endpoint for the implementation for the sake of scheduling the project and the inflexible final deadline. Therefore, the performance expectations compared to SEAL - which has had years of development from a team of experts - were further bounded.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Implementation}
@@ -232,7 +233,7 @@ Figure \ref{fig:bootstrapping} provides a graphical representation of the bootst
 \subsubsection{Optimisations}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-The principal optimisations of MeKKS came through the methods of data representation. When integrating SEAL into the project, a Python wrapper for a C++ implementation was used. Consequently, the application was forced to handle large C++ objects, hidden by a further layer of abstraction via the wrapper. Therefore, Python struggled to manipulate these objects efficiently, specifically during the networking stages of execution. As explained in §\ref{sec:idk}, the bottleneck for SEAL's performance was in data serialisation. However, since MeKKS was written in Python, the underlying functionality provided much more efficient manipulation as it could directly interact with the objects and their attributes.
+The principal optimisations of MeKKS came through the methods of data representation. When integrating SEAL into the project, a Python wrapper for a C++ implementation was used. Consequently, the application was forced to handle large C++ objects, hidden by a further layer of abstraction via the wrapper. Therefore, Python struggled to manipulate these objects efficiently, specifically during the networking stages of execution. As explained in §\ref{sec:networking}, the bottleneck for SEAL's performance was in data serialisation. However, since MeKKS was written in Python, the underlying functionality provided much more efficient manipulation as it could directly interact with the objects and their attributes.
 \smallskip \\ \indent
 Another optimisation came through the specialisation of the library. The project planning ensured MeKKS was only implemented once the application's core had been complete. As a result, the functionality required had been investigated and almost wholly finalised. Therefore, only the components needed for each class in MeKKS were implemented. This further reduced the size of objects and removed any unnecessary computations, making execution more efficient. For example, the most expensive operations offered by SEAL are rotations. However, since the application did not use them, they were ignored during the implementation of MeKKS.
 
@@ -253,7 +254,8 @@ This section is dedicated to detailing the techniques investigated for tackling 
 The core design of this project focused on emulating the MLaaS model employed by surveillance technology companies. Therefore, transferring large volumes of data to the cloud is a critical component, so a substantial portion of the investigation was considering how to reduce the effect of HE on uploading videos. The problem was considered from two angles: attempting to reduce the \textit{video size} (see §\ref{sec:seamCarving} and §\ref{sec:graphReps}) and attempting to increase the \textit{transmission rate} (see §\ref{sec:parallelisation}).
 
 \setlength{\leftskip}{0cm}
-\subsection{Seam Carving}
+\subsection{Memory Requirements}
+\subsubsection{Seam Carving}
 \label{sec:seamCarving}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
@@ -360,7 +362,7 @@ It is important to note that there have been several extensions to seam carving 
 \end{figure}
 
 \setlength{\leftskip}{0cm}
-\subsection{Graph Representation}
+\subsubsection{Graph Representation}
 \label{sec:graphReps}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
@@ -496,7 +498,7 @@ Using similar techniques to seam carving, it is possible to make this trade-off 
 \end{figure}
 
 \setlength{\leftskip}{0cm}
-\subsection{Parallelisation}
+\subsection{Transmission Rate}
 \label{sec:parallelisation}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
@@ -514,7 +516,7 @@ Parallel computing is often conflated with \textit{concurrent computing}. Howeve
 Traditionally, computer design has focussed on \textit{serial computation}. To solve a computational problem, a sequence of instructions was written, they were executed in order, and a result was returned. As predicted by Moore's law, technology scaling was able to double the performance of processors so that they could compute more complex expressions more efficiently for decades ~\cite{Moore}. However, factors like Dennard scaling mean this cannot last forever ~\cite{Dennard}. Therefore, to continue improving performance, computer architects turned to multiprocessing. Rather than making processor components more efficient so that a single instruction executes faster, similar performance gains can be made by executing multiple instructions simultaneously. Consequently, since evidence suggests processors will continue to be optimised to parallel computation, this seemed like a viable opportunity for investigating where performance might be gained in future iterations of surveillance technology.
 
 \setlength{\leftskip}{0cm}
-\subsubsection{Transmission}
+\subsubsection{Communication}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
 Parallelisation already exists in some communication protocols. The \textit{transmission control protocol} (TCP) uses a \textit{sliding window protocol} to send a group of data packets concurrently, ensuring they are ordered correctly at the receiving end. Figure \ref{fig:slidingWindow} depicts this. This and similar protocols exist in the \textit{data-link} layer of the \textit{OSI network model}. The goal of this section of the investigation was to attempt to move the parallelisation higher up the abstract stack.
@@ -583,15 +585,15 @@ This section discusses the implementation of the inference models required for m
 \label{sec:adaptations}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-There were two main challenges to overcome when converting inference algorithms to the HE domain. Firstly, the number of operations that can be applied is limited by the depth of the ciphertext. Secondly, the set of operations supported by CKKS is more limited than is available when working with plain data. Consequently, algorithms needed to be modified, and compromises made to produce accurate results without introducing detrimental side effects - for example, to accommodate more operations, the depth of a ciphertext could be increased, but this significantly reduces the efficacy of transmitting data.
+There were two main challenges to overcome when converting inference algorithms to the HE domain. Firstly, the number of operations that can be applied is limited by the depth of the ciphertext. Secondly, the set of operations supported by CKKS is more limited than is available when working with plain data. Consequently, algorithms needed to be modified, and compromises made to produce accurate results without introducing detrimental side effects - for example, to accommodate more operations, the depth of a ciphertext could be increased, but this significantly increases the memory usage of ciphertexts, so data transmission quickly becomes infeasible.
 \smallskip \\ \indent
-The adaptations required for each of the less complex algorithms are detailed below. A discussion of the techniques investigated for implementing GMMs is left to §\ref{sec:idk}, where more time can be given to an in-depth analysis.
+The adaptations required for each of the less complex algorithms are detailed below. A discussion of the techniques investigated for implementing GMMs is left to §\ref{sec:integration}, where more time can be given to an in-depth analysis.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Frame Differencing}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Frame differencing is a relatively simple algorithm to adapt for the HE domain. It only requires a single operation, \textit{subtraction}, that is provided by the standard CKKS implementation. Moreover, subtraction does not require a ciphertext to be rescaled. As such, its level is never decreased, so the size of the ciphertext can be minimised. As well as making networking more efficient, this also makes the inference algorithm faster because the data being operated over is more minor.
+Frame differencing is a relatively simple algorithm to adapt for the HE domain. It only requires a single operation, \textit{subtraction}, that is provided by the standard CKKS implementation. Moreover, subtraction does not require a ciphertext to be rescaled. As such, its level is never decreased, so the size of the ciphertext can be minimised. As well as making networking more efficient, this also makes the inference algorithm faster because the data being operated over is smaller.
 \smallskip \\ \indent
 Therefore, the only modification required to operate over HE data is to replace the subtraction function in the traditional algorithm with a call to the subtraction circuit provided by the HE library.
 

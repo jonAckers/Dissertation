@@ -8,7 +8,7 @@ This chapter discusses the preparatory work done before beginning the project's 
 \label{sec:preliminaries}
 \setlength{\leftskip}{0.25cm}
 \indent \indent
-This section is dedicated to introducing the fundamental underlying concepts, terminologies, and notations fundamental to this project. The project spans two domains of computer science: cryptography and unsupervised machine learning. These are vast, active research areas. Therefore, for brevity, only concepts essential to understanding this dissertation will be presented - links to further resources may be provided for the sake of brevity.
+This section is dedicated to introducing the fundamental underlying concepts, terminologies, and notations fundamental to this project. The project spans three domains of computer science: cryptography, graphics, and unsupervised machine learning. These are vast, active research areas. Therefore, for brevity, only concepts essential to understanding this dissertation will be presented - links to further resources may be provided in places where further explanation is required.
 
 \setlength{\leftskip}{0cm}
 
@@ -19,7 +19,7 @@ This section is dedicated to introducing the fundamental underlying concepts, te
 The design of this project considers the Machine Learning as a Service (MLaaS) framework, in which users first send their data to a server where machine learning inference is performed, and the results are returned. In particular, the transfer of surveillance video data to be analysed by security companies. Suppose that a subscriber to one of these services, Alice, sets up a camera to record activity at her front door. In this scenario, there are two critical threats: 
 \begin{enumerate*}[label=$(\roman*)$]
     \item an adversary, Eve, may eavesdrop on the data while it is being transmitted between the client and server, and 
-    \item an employee, Mallory, of the MLaaS provider may access the data while it is stored by the server, allowing them to monitor the activities of members of a household or observe the contents of a house, exposing risks of theft
+    \item an employee, Mallory, of the MLaaS provider may access the data while it is stored by the server, exposing a range of privacy risks including identity theft, monitoring intimate behaviours of household members, observations of household contents, and more.
 \end{enumerate*}
 Figure \ref{fig:threatModel} illustrates this succinctly. The first threat can be mitigated easily enough using cryptographic protocols such as TLS ~\cite{TLS}. However, the second threat is much more difficult to defend against, particularly because data must usually be decrypted for inference to be performed ~\cite{Bae}.
 \smallskip \\ \indent
@@ -130,7 +130,7 @@ Once a background subtraction model has been developed, it can be used to detect
 \subsubsection{Frame Differencing}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-The most straightforward moving object detection algorithm, \textit{frame differencing} works by iterating through the frames of a video in a single pass. First, a reference frame must be established as the background. There are several options for this. One approach is to store the first frame of the video. Another, more common option is to compare each frame to the frame directly before it. The advantage of this is that it will evolve, so if a new object is permanently added to the scene, it won't be included in the foreground forever\footnote{For example, if a fence was added around someone's property or a car was parked in the scene, comparing to a static frame would mean these objects would always be highlighted by frame differencing, despite not moving}. However, there are disadvantages to this approach if an object is moving slowly enough to overlap with itself across frames. A balance can be found by periodically updating the reference frame or comparing each frame to one several before it, for example.
+The most straightforward moving object detection algorithm, \textit{frame differencing} works by iterating through the frames of a video in a single pass ~\cite{FrameDifferencing}. First, a reference frame must be established as the background. There are several options for this. One approach is to store the first frame of the video. Another, more common option is to compare each frame to the frame directly before it. The advantage of this is that it will evolve, so if a new object is permanently added to the scene, it won't be included in the foreground forever\footnote{For example, if a fence was added around someone's property or a car was parked in the scene, comparing to a static frame would mean these objects would always be highlighted by frame differencing, despite not moving}. However, there are disadvantages to this approach if an object is moving slowly enough to overlap with itself across frames. A balance can be found by periodically updating the reference frame or comparing each frame to one several before it, for example.
 \smallskip \\ \indent
 Each frame can be considered once the reference frame, $B$, has been selected. Denoting the frame at time $t$ as $f_t$, the value of each pixel in $B$, $P(B)$, can be subtracted from the corresponding pixel in $f_t$, $P(f_t)$. This can be represented mathematically by Equation \ref{eq:frameDifferencing}.
 \begin{equation}
@@ -143,7 +143,7 @@ where $F$ represents the frames in the resultant video highlighting moving objec
 \subsubsection{Mean Filter}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-A \textit{mean filter} approach to moving object detection attempts to overcome the weaknesses of selecting a reference frame when performing frame differencing. Instead of taking a frame directly from the video, the value of $B$ at time $t$ is calculated using Equation \ref{eq:meanFilter}.
+A \textit{mean filter} approach to moving object detection attempts to overcome the weaknesses of selecting a reference frame when performing frame differencing ~\cite{MeanFilter}. Instead of taking a frame directly from the video, the value of $B$ at time $t$ is calculated using Equation \ref{eq:meanFilter}.
 \begin{equation}
     \label{eq:meanFilter}
     B = \frac{1}{N} \sum^N_{i=1} f_{t-i}
@@ -156,7 +156,7 @@ After $B$ has been calculated at time $t$, the value of the resultant video $F_t
 \subsubsection{Median Filter}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Performing moving object detection using a median filter is almost identical to the mean filter method. The difference arises in how the reference frame is calculated. In this approach, the median of the preceding $N$ frames is calculated instead of the mean.
+Performing moving object detection using a \textit{median filter} is almost identical to the mean filter method ~\cite{MeanFilter}. The difference arises in how the reference frame is calculated. In this approach, the median of the preceding $N$ frames is calculated instead of the mean.
 \smallskip \\ \indent
 Then, like the preceding methods, the moving objects are extracted by subtracting the reference frame from each frame in the video, according to Equation \ref{eq:frameDifferencing}.
 
@@ -258,7 +258,7 @@ The \textit{implementation} and \textit{testing} stages were intertwined where p
 \smallskip \\ \indent
 The \textit{evaluation} stage replaces the \textit{maintenance} stage of the traditional Waterfall model because it is unsuitable for this project. This stage involves running experiments to evaluate the project.
 \smallskip \\ \indent
-When working on the extensions, an iterative model was more appropriate. For example, extension \texttt{B1} could be easily split into distinct modules, so they could be developed then tested in a repeating process. Therefore, development transitioned to an Agile model, depicted in Figure \ref{fig:agile}.
+When working on the extensions, an iterative model was more appropriate. The main reason for this was this section of the project was less understood so riskier than the core components. Consequently, a rapid cyclical development process requiring components to be broken down into smaller units would allow any problems to be discovered sooner, preventing the project from experiencing any costly setbacks. Therefore, development transitioned to an Agile model, depicted in Figure \ref{fig:agile}. Moreover, regular supervisor meetings allowed Agile's sprint system to be utilised so that a prototype of the project could be presented in each meeting to ensure progress was thoroughly tracked.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/agile.png}
