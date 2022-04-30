@@ -5,7 +5,7 @@
 This chapter evaluates the project's implementation using three main criteria: the extent to which it meets the success criteria detailed in §\ref{sec:requirements},  the applicability of HE to inference algorithms, and its practicality regarding current, real-world surveillance technology. Consequently, the chapter is divided into three sections to tackle each criterion distinctly. Both quantitative and qualitative analysis is used throughout the chapter to analyse the implementation's performance and make predictions about the scope to which the investigation may be extended in future. Unless otherwise specified, the data presented was generated using $32 \times 32$ pixel images from the Moving-MNIST dataset.
 
 \section{Requirements Analysis}
-\begin{table}
+\begin{table}[h!]
     \centering
     \def\arraystretch{1.25}
     \begin{tabular}{|c|c|p{9.6cm}|}
@@ -43,18 +43,12 @@ The success criteria in §\ref{sec:requirements} were split into two categories:
 \indent \indent
 Adapting moving object detection algorithms for the HE domain proved to be the project's biggest challenge. The limited number of operations available, combined with the limited number of applications supported by ciphertexts, means some aspects of inference cannot be recreated. Particular challenges came when trying to implement the median filter and a GMM.
 \smallskip \\ \indent
-However, frame differencing, the mean filter, and the Gaussian average methods of background subtraction were successfully implemented using the techniques described in §\ref{sec:adaptations}. A sample of the results from each of these algorithms running on the Moving-MNIST dataset is provided in Figure \ref{fig:mnistInferenceResults}, and an example of what can be achieved on a more realistic dataset - the LASIESTA dataset - is provided in Figure \ref{fig:lasiestaInferenceResults}.
+However, frame differencing, the mean filter, and the Gaussian average methods of background subtraction were successfully implemented using the techniques described in §\ref{sec:adaptations}. A sample of the results from each of these algorithms running on the Moving-MNIST dataset is provided in Figure \ref{fig:mnistInferenceResults}, and an example of performance on the LASIESTA dataset is included in Appendix \ref{app:LASIESTA}.
 \begin{figure}
     \centering
     \input{figures/mnistInferenceResults}
     \caption{Moving-MNIST Inference Results}
     \label{fig:mnistInferenceResults}
-\end{figure}
-\begin{figure}
-    \centering
-    \input{figures/lasiestaInferenceResults}
-    \caption{LASIESTA Inference Results}
-    \label{fig:lasiestaInferenceResults}
 \end{figure}
 \setlength{\leftskip}{0cm}
 \subsection{Online Mixture Model}
@@ -100,45 +94,42 @@ This section will evaluate the implementation from the perspective of practicali
 \indent \indent
 Before data can be sent across the network, it must be \textit{packed}, and once it is received, it must be \textit{unpacked}. This proved to be a significant bottleneck before transmitting data. During the packing phase, data must be encrypted and serialised before it is transmitted over the network. To make transmission more efficient, a compression stage is added to try and reduce the memory usage of videos. Similarly, in the unpacking phase, data must be decompressed, deserialised, and decrypted to recover the video and inference results.
 \smallskip \\ \indent
-As described in §\ref{sec:networking}, several methods were investigated to try and reduce this bottleneck. By combining some of these techniques, substantial progress was made in reducing the time the packing and unpacking algorithms took to run. Figure \ref{fig:naivePackingAndUnpackingGraph} provides the running time of a naw\"ive implementation of these algorithms, and Figure \ref{fig:packingAndUnpackingGraph} demonstrates the performance of an optimised implementation. From these charts, Table \ref{tab:packingAndUnpacking} has been derived to highlight the improvement for each category of inference and encryption scheme. Interestingly, the unpacking algorithm can be improved using parallelisation when the CKKS scheme is used, but it will worsen performance when MeKKS is used. This is due to the delays caused by deserialising data that were overcome by implementing directly in Python - although this does make the encryption and decryption functions perform dramatically worse.
+As described in §\ref{sec:networking}, several methods were investigated to try and reduce this bottleneck. By combining some of these techniques, substantial progress was made in reducing the time the packing and unpacking algorithms took to run. Figure \ref{fig:naivePackingAndUnpackingGraph} provides the running time of a na\"ive implementation of these algorithms, and Figure \ref{fig:packingAndUnpackingGraph} demonstrates the performance of an optimised implementation. From these charts, Table \ref{tab:packingAndUnpacking} has been derived to highlight the improvement for each category of inference and encryption scheme. Interestingly, the unpacking algorithm can be improved using parallelisation when the CKKS scheme is used, but it will worsen performance when MeKKS is used. This is due to the delays caused by deserialising data that were overcome by implementing directly in Python - although this does make the encryption and decryption functions perform dramatically worse.
 \smallskip \\ \indent
-While these times may appear slow, it is important to remember that surveillance companies rarely stream all video from a device. Cameras will usually contain multiple sensors to determine which video is worth performing inference on to conserve battery life. Consequently, real-time performance is not required.
-
-\begin{figure}
+While these times may appear slow, it is important to remember that surveillance companies rarely stream all video from a device. Cameras will usually contain multiple sensors to determine when the primary camera should be triggered to conserve battery life. Then, only short clips containing potential events are transferred to the server for inference. Consequently, real-time performance is not required. Although, speed cannot be ignored to ensure users are not notified too late.
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/naivePackingTimes.eps}
+        \includegraphics[width=\textwidth]{figures/naivePackingTimes}
         \caption{Packing}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/naiveUnpackingTimes.eps}
+        \includegraphics[width=\textwidth]{figures/naiveUnpackingTimes}
         \caption{Unpacking}
     \end{subfigure}
     \caption{Na\"ive Packing and Unpacking Times}
     \label{fig:naivePackingAndUnpackingGraph}
 \end{figure}
-
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/packingTimes.eps}
+        \includegraphics[width=\textwidth]{figures/packingTimes}
         \caption{Packing}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/unpackingTimes.eps}
+        \includegraphics[width=\textwidth]{figures/unpackingTimes}
         \caption{Unpacking}
     \end{subfigure}
     \caption{Optimised Packing and Unpacking Times}
     \label{fig:packingAndUnpackingGraph}
 \end{figure}
-
-\begin{table}
+\begin{table}[h!]
     \centering
     \def\arraystretch{1.25}
     \resizebox{\textwidth}{!}{%
@@ -182,12 +173,11 @@ While these times may appear slow, it is important to remember that surveillance
 \indent \indent
 The other key aspect of the network component of the project is transmitting the data. One fundamental flaw of HE is the memory consumption inflation caused by encrypting data. Consequently, transmission times are much slower than when working with plain video data. In the final application, two main techniques were used to reduce this impact: vectorisation and compression.
 \smallskip \\ \indent
-For compression, several algorithms were tested - they were compared for both running time and compression ratio - and the algorithm that performed best on CKKS data was selected. The results of these tests are included in Table \ref{tab:compression}. From this, the impact of compressing videos is shown in Figure \ref{fig:compression1}.
+For compression, several algorithms were tested - they were compared for both running time and compression ratio - and the algorithm that performed best on CKKS data was selected. The results of these tests are included in Table \ref{tab:compression}. From this, the impact of compressing videos is shown in Figure \ref{fig:compression1}. MeKKS's more basic implementation means the ciphertext size is constant for all inference methods. Despite this, it is still two orders of magnitude smaller than CKKS data, thanks to the native Python data structures used. Compression is much more significant with CKKS data, almost halving the memory usage for the Gaussian inference, making it a valuable component of the CKKS packing procedure, but largely unnecessary when MeKKS is selected.
 \smallskip \\ \indent
 Already, this provides good improvements over raw data. However, this can be extended by encrypting rows of video frames as a single ciphertext rather than each pixel distinctly. Figure \ref{fig:compression2} depicts the results of this adaptation.
 \smallskip \\ \indent
 As a result of the above optimisations, the running times for the client and server are summarised by Figure \ref{fig:clientTimeGraph} and Figure \ref{fig:serverTimeGraph} respectively.
-
 \begin{table}
     \centering
     \def\arraystretch{1.25}
@@ -211,53 +201,50 @@ As a result of the above optimisations, the running times for the client and ser
     \caption[Compression algorithms]{Evaluation of compression algorithms.}
     \label{tab:compression}
 \end{table}
-
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/naiveMemUsageCKKS.eps}
+        \includegraphics[width=\textwidth]{figures/naiveMemUsageCKKS}
         \caption{CKKS}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/naiveMemUsageMeKKS.eps}
+        \includegraphics[width=\textwidth]{figures/naiveMemUsageMeKKS}
         \caption{MeKKS}
     \end{subfigure}
     \caption{Na\"ive Memory Usage Compression Comparison}
     \label{fig:compression1}
 \end{figure}
-
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/memUsageCKKS.eps}
+        \includegraphics[width=\textwidth]{figures/memUsageCKKS}
         \caption{CKKS}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/memUsageMeKKS.eps}
+        \includegraphics[width=\textwidth]{figures/memUsageMeKKS}
         \caption{MeKKS}
     \end{subfigure}
     \caption{Vectorised Memory Usage Compression Comparison}
     \label{fig:compression2}
 \end{figure}
-
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[t]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/clientTimes.eps}
+        \includegraphics[width=\textwidth]{figures/clientTimes}
         \caption{Client Running Times}
         \label{fig:clientTimeGraph}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/serverTimes.eps}
+        \includegraphics[width=\textwidth]{figures/serverTimes}
         \caption{Server Running Times}
         \label{fig:serverTimeGraph}
     \end{subfigure}
@@ -278,17 +265,17 @@ Another area of investigation that must be considered when discussing practicali
 \indent \indent
 The running time for each inference algorithm varies significantly and is severely impacted by the parameters used to tune the accuracy of each algorithm, as discussed in §\ref{sec:adaptations}. Therefore, for this comparison, the parameters were tuned using the CKKS scheme and kept constant for a fair evaluation when testing the MeKKS scheme. The results are depicted by Figure \ref{fig:inferenceTime}. As expected, the CKKS scheme runs much quicker than the MeKKS scheme due to the more optimised implementation.
 
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/inferenceTimesCKKS.eps}
+        \includegraphics[width=\textwidth]{figures/inferenceTimesCKKS}
         \caption{CKKS}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.495\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/inferenceTimesMeKKS.eps}
+        \includegraphics[width=\textwidth]{figures/inferenceTimesMeKKS}
         \caption{MeKKS}
     \end{subfigure}
     \caption{Inference Times}
@@ -299,14 +286,9 @@ The running time for each inference algorithm varies significantly and is severe
 \subsubsection{Accuracy}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-The accuracies of each HE inference algorithm are compared in Figure \ref{fig:accuracy}. The Moving-MNIST dataset allows accuracy to be easily calculated because it only contains white moving objects on a black background. Therefore, the similarity between the inference result and the original video can be determined by calculating the \textit{sum square difference} according to Equation \ref{eq:sumSquareDiff}. From this, the accuracy of each encryption scheme can be compared for each inference method.
-
-\begin{figure}
-    \centering
-    \includegraphics[scale=0.8]{figures/accuracy.eps}
-    \caption{Inference Accuracy}
-    \label{fig:accuracy}
-\end{figure}
+The accuracies of each HE inference algorithm are compared in Figure \ref{fig:accuracy}. While the HE implementations do not exactly match inference in unencrypted data, they are able to produce nearly the same accuracy, producing almost identical results to the human eye. Perhaps surprisingly, MeKKS produces slightly more accurate results with frame differencing, but this is likely due to the random noise induced by HE encryption.  
+\smallskip \\ \indent
+The Moving-MNIST dataset allows accuracy to be easily calculated because it only contains white moving objects on a black background. Therefore, the similarity between the inference result and the original video can be determined by calculating the \textit{sum square difference} according to Equation \ref{eq:sumSquareDiff}
 
 \begin{equation}
     \label{eq:sumSquareDiff}
@@ -317,6 +299,24 @@ The accuracies of each HE inference algorithm are compared in Figure \ref{fig:ac
     \end{split}
 \end{equation}
 given two images $J[x,y]$ and $I[x,y]$ with $(x,y) \in N^{N \times M}$.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{figures/accuracy}
+    \caption{Inference Accuracy}
+    \label{fig:accuracy}
+\end{figure}
+
+\setlength{\leftskip}{0cm}
+\subsubsection{Energy Usage}
+\setlength{\leftskip}{0.5cm}
+\indent \indent
+While not a particular focus of this investigation, energy usage is an important factor in determining the practicality of HE in surveillance. This is because the majority of devices being emulated - surveillance cameras or doorbells - are battery-powered. As such, they must be conservative in their energy usage in order to extend battery life as far as possible. Figure \ref{fig:energy} depicts the energy usage of each combination of encryption scheme and inference method for the client and server modules. The absolute value cannot be isolated from background energy usage, so values have been normalised to allow for comparison on a log scale.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{figures/energyUsage}
+    \caption{Energy Usage}
+    \label{fig:energy}
+\end{figure}
 
 \setlength{\leftskip}{0cm}
 

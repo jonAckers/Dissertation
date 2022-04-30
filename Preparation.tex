@@ -77,24 +77,7 @@ While it is possible to create perfectly secure encryption schemes, they are imp
 \smallskip \\ \indent
 Similarly, the HE schemes used in this project rely on computational security rather than perfect security. More specifically, they utilise the hardness of the \textit{ring learning with errors} (henceforth RLWE) problem introduced by Lyubashevsky et al.\ ~\cite{RLWE}. A polynomial-time reduction from the \textit{shortest vector problem} to RLWE can be derived. Therefore, since the shortest vector problem is $\mathcal{NP}$-hard under the correct choice of parameters, it is safe to rely on RLWE for computational security.
 \smallskip \\ \indent
-RLWE considers the mathematical objects, \textit{rings}. To understand \textit{rings}, \textit{groups} must first be understood. A group $(\mathbb{G}, \bullet)$ is a set, $\mathbb{G}$, and an operator, $\bullet: \mathbb{G} \times \mathbb{G} \rightarrow \mathbb{G}$, such that the following properties hold:
-\begin{itemize}
-    \item \textbf{Closure}: $a \bullet b \in \mathbb{G}$ for all $a,b \in \mathbb{G}$.
-    \item \textbf{Associativity}: $a \bullet (b \bullet c) = (a \bullet b) \bullet c$ for all $a, b, c \in \mathbb{G}$.
-    \item \textbf{Neutral Element}: there exists an $e \in \mathbb{G}$ such that for all $a \in \mathbb{G}$, $a \bullet e = e \bullet a = a$
-    \item \textbf{Inverse Element}: for each $a \in \mathbb{G}$ there exists some $b \in \mathbb{G}$ such that $a \bullet b = b \bullet a = e$
-\end{itemize}
-If $a \bullet b = b \bullet a$ for all $a, b \in \mathbb{G}$, the group is called \textbf{commutative} (or \textbf{abelian}). If there is no inverse element for each element, $(\mathbb{G}, \bullet)$ is a \textbf{monoid} instead.
-\smallskip \\ \indent
-From this, a \textit{ring} is defined as $(\textbf{R}, \boxplus, \boxtimes)$, where $\textbf{R}$ is a set, $\boxplus: \textbf{R} \times \textbf{R} \rightarrow \textbf{R}$, and $\boxtimes: \textbf{R} \times \textbf{R} \rightarrow \textbf{R}$, such that
-\begin{itemize}
-    \item $(\textbf{R}, \boxplus)$ is an abelian group.
-    \item $(\textbf{R}, \boxtimes)$ is a monoid.
-    \item $\boxplus$ and $\boxtimes$ are distributive - for all $a, b, c \in \textbf{R}$, $a \boxtimes (b \boxplus c) = (a \boxtimes b) \boxplus (a \boxtimes c)$ and $(a \boxplus b) \boxtimes c = (a \boxtimes c) \boxplus (b \boxtimes c)$.
-\end{itemize}
-If $a \boxtimes b = b \boxtimes a$ then it is a \textbf{commutative} ring, but this is not necessary for rings generally. One example of a ring is $(\mathbb{Z}[x], +, \times)$.
-\smallskip \\ \indent
-Specifically, the RLWE problem is concerned with the ring formed by the set of polynomials modulo $\Phi (X)$ that also have coefficients in $\mathbb{Z}_q$\footnote{$\mathbb{Z}_q$ is the set of integers modulo $q$. For example, $\mathbb{Z}_7 = \{0, 1, 2, 3, 4, 5, 6\}$.}. Known as a \textit{quotient ring}, this can be denoted by $\mathcal{R}_q = \mathbb{Z}[X] / (\Phi(X))$, where $\Phi(X)$ is an \textit{irreducible polynomial} - a polynomial which cannot be factored into two non-constant polynomials.
+To understand the RLWE problem, some knowledge of group theory is required. The relevant knowledge is introduced in Appendix \ref{app:groups}. The RLWE problem is concerned with the ring formed by the set of polynomials modulo $\Phi (X)$ that also have coefficients in $\mathbb{Z}_q$\footnote{$\mathbb{Z}_q$ is the set of integers modulo $q$. For example, $\mathbb{Z}_7 = \{0, 1, 2, 3, 4, 5, 6\}$.}. Known as a \textit{quotient ring}, this can be denoted by $\mathcal{R}_q = \mathbb{Z}[X] / (\Phi(X))$, where $\Phi(X)$ is an \textit{irreducible polynomial} - a polynomial which cannot be factored into two non-constant polynomials.
 \smallskip \\ \indent
 Informally, RLWE describes the problem of finding an unknown $s \in \mathcal{R}_q$ given a vector of polynomials computed using $s$ and some sampled errors. Consequently, an encryption scheme can be created such that, after encoding a plaintext vector, $\vec{v}$, as a list of polynomials and then using a secret polynomial to convert this list to a polynomial, it is infeasible to recover $\vec{v}$ in polynomial time.
 \smallskip \\ \indent
@@ -120,30 +103,30 @@ The sampled errors used when deriving ciphertexts implies almost exponential gro
 \indent \indent
 A discussion of \textit{image segmentation} has been well established in the fields of digital image processing and computer vision research. The problem describes the process of partitioning a digital image into multiple regions, represented as sets of pixels. The goal of segmentation is to simplify the representation of an image so that it is easier to analyse. For example, to locate objects, or boundaries, in an image. More precisely, image segmentation is the process of labelling each pixel of an image such that all pixels sharing a particular characteristic are assigned the same label ~\cite{Shapiro}.
 \smallskip \\ \indent
-There are two broad categories of segmentation techniques: \textit{semantic segmentation} and \textit{instance segmentation}. Semantic segmentation is an approach for grouping objects based on predefined categories. For example, all people in an image may be labelled as ``people'', all vehicles labelled ``vehicles'', and all animals labelled as ``animals'' ~\cite{Semantic}.  In contrast, instance segmentation provides a more refined categorisation of objects. This approach splits each category into separate occurrences. For example, each person in an image may be highlighted distinctly ~\cite{Instance}.
+There are two broad categories of segmentation techniques: \textit{semantic} \cite{Semantic} and \textit{instance} \cite{Instance}. This dissertation will focus on semantic segmentation through moving object detection because videos will be segmented into two categories: foreground and background, rather than labelling individual instances of objects.
 \smallskip \\ \indent
-One application of image segmentation is \textit{foreground extraction}, also known as \textit{background subtraction}, which describes the techniques of segmenting an image into two groups: the foreground and the background, so that further processing can be applied. In order to perform background subtraction, the background of an image must be modelled so that changes in the scene can be detected. However, this can be difficult to achieve. Image data can be very diverse, with factors such as variable lighting, repetitive movements (like leaves, waves, and shadows) making robust models hard to develop.
+This application is known as either \textit{foreground extraction} or \textit{background subtraction}. To perform this inference, the background of an image must be modelled so that changes in the scene can be detected. This is an unsolved problem. Image data can be very diverse, with variable lighting and repetitive movements (like leaves and shadows) making robust models hard to develop.
 \smallskip \\ \indent
-Once a background subtraction model has been developed, it can be used to detect moving objects in videos. This is accomplished by comparing the foreground of the current frame to the foreground of a reference frame and extracting the observed differences. There are several methods for achieving this. Below are the five algorithms investigated for this dissertation.
+Once a background model has been developed, it can be used to detect moving objects in videos by comparing each frame to a reference frame and extracting the observed differences. There are several methods for achieving this. Below are the five algorithms investigated for this dissertation.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Frame Differencing}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-The most straightforward moving object detection algorithm, \textit{frame differencing} works by iterating through the frames of a video in a single pass ~\cite{FrameDifferencing}. First, a reference frame must be established as the background. There are several options for this. One approach is to store the first frame of the video. Another, more common option is to compare each frame to the frame directly before it. The advantage of this is that it will evolve, so if a new object is permanently added to the scene, it won't be included in the foreground forever\footnote{For example, if a fence was added around someone's property or a car was parked in the scene, comparing to a static frame would mean these objects would always be highlighted by frame differencing, despite not moving}. However, there are disadvantages to this approach if an object is moving slowly enough to overlap with itself across frames. A balance can be found by periodically updating the reference frame or comparing each frame to one several before it, for example.
+\textit{Frame differencing} is the most straightforward background subtraction algorithm ~\cite{FrameDifferencing}. First, a reference frame is established. There are several options for this, with the most common options being to select the first frame of the video or continually updating to the frame previously received. The challenge comes from ensuring that the model can adapt to permanent changes, such as a fence being added to a property. However, updating the reference frame too frequently could cause issues with slow-moving objects becoming occluded.
 \smallskip \\ \indent
-Each frame can be considered once the reference frame, $B$, has been selected. Denoting the frame at time $t$ as $f_t$, the value of each pixel in $B$, $P(B)$, can be subtracted from the corresponding pixel in $f_t$, $P(f_t)$. This can be represented mathematically by Equation \ref{eq:frameDifferencing}.
+Once the reference frame, $B$, has been selected, the foreground can be extracted. Denoted each frame at time $t$ as $f_t$, the value of each pixel in $B$ $P(B)$ can be subtracted from the corresponding pixel in $f_t$, $P(f_t)$. The mathematical definition is given by Equation\ref{eq:frameDifferencing}.
 \begin{equation}
     \label{eq:frameDifferencing}
     P(F_t) = P(f_t) - P(B)
 \end{equation}
-where $F$ represents the frames in the resultant video highlighting moving objects.
+where $F$ represents the frames in the resultant video.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Mean Filter}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-A \textit{mean filter} approach to moving object detection attempts to overcome the weaknesses of selecting a reference frame when performing frame differencing ~\cite{MeanFilter}. Instead of taking a frame directly from the video, the value of $B$ at time $t$ is calculated using Equation \ref{eq:meanFilter}.
+A \textit{mean filter} approach to moving object detection attempts to overcome the weaknesses of frame differencing in selecting a reference frame ~\cite{MeanFilter}. Instead of taking a frame directly from the video, the value of $B$ at time $t$ is calculated using Equation \ref{eq:meanFilter}.
 \begin{equation}
     \label{eq:meanFilter}
     B = \frac{1}{N} \sum^N_{i=1} f_{t-i}
@@ -156,17 +139,18 @@ After $B$ has been calculated at time $t$, the value of the resultant video $F_t
 \subsubsection{Median Filter}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Performing moving object detection using a \textit{median filter} is almost identical to the mean filter method ~\cite{MeanFilter}. The difference arises in how the reference frame is calculated. In this approach, the median of the preceding $N$ frames is calculated instead of the mean.
+Performing moving object detection using a \textit{median filter} is almost identical to the mean filter method ~\cite{MeanFilter}. However, the median of the preceding $N$ frames is used to calculate the reference frame rather than the mean.
 \smallskip \\ \indent
-Then, like the preceding methods, the moving objects are extracted by subtracting the reference frame from each frame in the video, according to Equation \ref{eq:frameDifferencing}.
+Then, like before, the moving objects are extracted by subtracting the reference frame from each frame in the video, according to Equation \ref{eq:frameDifferencing}.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Gaussian Average}
+\label{sec:gaussianAverage}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Wren et al.\ originally proposed fitting a Gaussian probabilistic density function to the most recent $N$ frames ~\cite{Wren}. Rather than storing a simple reference image that is subtracted from each frame in the video, this method stores a mean and variance value for each pixel in a video frame. The likelihood of a value of a particular pixel occurring can be calculated using this. It is assumed that the most likely value for a pixel will be equivalent to the background of a scene, so if an observed value is sufficiently unlikely according to its Gaussian distribution, it must be because a change has occurred in that portion of the frame. Therefore, that pixel is added to the foreground segment of the video.
+Wren et al.\ originally proposed fitting a Gaussian probabilistic density function to the most recent $N$ frames [WREN]. Rather than storing a simple reference image that is subtracted from each frame in the video, this method stores a mean and variance for each pixel in a frame. When a new frame is received, the likelihood of each pixel is calculated. Assuming that the background is the most common value for a pixel, the foreground can be segmented by grouping the pixels with a sufficiently low likelihood.
 \smallskip \\ \indent
-A na\"ive approach to the Gaussian Average method would be to iterate through each frame in the video, calculating the mean and variance for each pixel and evaluating the likelihood from scratch every time. This would have quadratic complexity since, for each frame, $N$ calculations per pixel would have to be performed. A more efficient algorithm would utilise a cumulative function for the mean and standard deviation that can be updated in constant time. Consequently, this would have linear complexity because only a single calculation would need to be performed for each pixel in each frame. This approach would update the mean using Equation \ref{eq:mean}, and the variance using Equation \ref{eq:variance}.
+Rather than recalculating the mean every time a frame is received - giving an $O(n^2)$ time complexity - the algorithm can be implemented using cumulative functions for the mean and variance to achieve a linear time complexity. The functions are defined by Equation \ref{eq:mean} and Equation \ref{eq:variance} respectively. 
 \begin{equation}
     \label{eq:mean}
     \mu_t =
@@ -183,7 +167,7 @@ A na\"ive approach to the Gaussian Average method would be to iterate through ea
         d^2 \alpha + (1 - \alpha) \sigma^2_{t-1} & \text{otherwise}
     \end{cases}
 \end{equation}
-where $\alpha$ determines the size of the \textit{temporal window} used to fit the Gaussian model\footnote{$\alpha$ acts similarly to a decay factor, weighting the most recent frames as more impactful on the model. Eventually, an old frame will be weighted so insignificantly that its impact is negligible. Therefore, it determines how far into the past the model uses to predict future pixels, hence the `temporal window'.}, $d = |f_t - \mu_t|$ gives the Euclidean distance from the pixel to the mean, and $c$ is some constant defined by the model creator. 
+where $\alpha$ determines the size of the \textit{temporal window} used to fit the Gaussian model\footnote{$\alpha$ acts similarly to a decay factor, weighting the most recent frames more importantly. Eventually, an old frame will be weighted so insignificantly that its impact is negligible. Therefore, it determines how far into the past the model uses to predict future pixels, hence the `temporal window'.}, $d = |f_t - \mu_t|$ gives the Euclidean distance from the pixel to the mean, and $c$ is some constant defined by the model creator.
 \smallskip \\ \indent
 From these models, the foreground can be extracted according to Equation \ref{eq:meanThreshold},
 \begin{equation}
@@ -192,7 +176,7 @@ From these models, the foreground can be extracted according to Equation \ref{eq
 \end{equation}
 where $k$ is a constant that the model creator can tune to achieve optimal results.
 \smallskip \\ \indent
-A variant of this method exists where the mean and variance are only updated if a pixel is believed to be in the background. This prevents the model from becoming skewed if there is lots of movement in the frame. However, it has severe limitations. For example, it only works if the image is initially entirely background, and it cannot cope with gradually changing backgrounds.
+A variant of this algorithm exists where the model is only updated if a pixel is believed to be in the background. This prevents the model from becoming skewed if there is lots of movement. However, it requires the entire frame to be initially background and struggles to cope with changes to the background.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Gaussian Mixture Models}
@@ -200,13 +184,9 @@ A variant of this method exists where the mean and variance are only updated if 
 \indent \indent
 Stauffer and Grimson proposed \textit{Gaussian mixture models} (henceforth GMMs) for moving object detection in 1999 ~\cite{Stauffer}. GMMs are probabilistic models that represent the presence of normally distributed subpopulations within an overall population. They are particularly useful because they don't require the subpopulation of a data point to be identified. Instead, subpopulations are learned automatically, constituting a form of unsupervised machine learning.
 \smallskip \\ \indent
-A simple application of GMMs is in modelling human heights. Typically, two Gaussian distributions will be used: one for males and one for females. Consequently, given just height data, with no gender assignments, it can be assumed that the distribution of all heights should follow the sum of two scaled and shifted Gaussian distributions. A model that can make this assumption on its own (or unsupervised) is an example of a GMM. In general, GMMs can be applied to more than two components.
-\smallskip \\ \indent
 There are two types of parameters necessary for GMMs, the \textit{component weights}, and the component \textit{means} and \textit{variances}. For a GMM with $N$ components, the $i^\text{th}$ component has $\mu_i$ and variance $\sigma_i$ in the \textit{univariate case}, and mean $\vec{\mu}_i$ and a covariance matrix $\Sigma_i$ in the \textit{multivariate case}. The component weights, $\phi_k$ for component $k$, are constrained by the equation $\sum^K_{i=1} \phi_i = 1$. If the component weights aren't learned, they are known as an \textit{a-priori}\footnote{A probability derived purely through deductive reasoning.} distribution over components such that $\probP(x \text{ generated by component k}) = \phi_k$. If the component weights are learned, they are known as \textit{a-posteriori}\footnote{From Bayesian statistics, referring to conditional probability $\probP(A | B)$.} estimates of the component probabilities given the data.
 \smallskip \\ \indent
-There are several methods for fitting the GMM's parameters. A common method is to use \textit{expectation maximisation} (EM), if the number of components of the GMM is known. When fitting a GMM, the Gaussian distributions are being tuned to match the distributions observed in the data. If all of the data is known, it can all be incorporated into this stage to achieve the most accurate fitting. However, in practice, it is likely that only a subset of the data will be available, so the GMM will then have to extrapolate to the real values. This technique can also be taken advantage of if there is limited time in which to perform fitting.
-\smallskip \\ \indent
-The EM algorithm is split into two many stages. Firstly, the E-step calculates the expectation of assigning each data point to each component of the GMM, given the GMM's parameters. Secondly, the M-step updates the values of each parameter to maximise the expectations. These two steps repeat until the algorithm converges. Informally, this works because knowing the component assignment for each data point makes solving for the parameters easy, and knowing the parameters makes inferring the probability of a component given the data point easy\footnote{The E-step corresponds to the latter case, and the M-step corresponds to the former.}. Therefore, by alternating which values are assumed known, maximum-likelihood estimates of the unknown values can be efficiently calculated.
+There are several methods for fitting the GMM's parameters. A common method is to use \textit{expectation maximisation} (EM), if the number of components of the GMM is known. When fitting a GMM, the Gaussian distributions are tuned to match the distributions observed in the data. If all of the data is known, it can be incorporated into this stage to achieve the most accurate fitting. However, only a subset of the data will likely be available in practice, so the GMM will have to extrapolate to the actual values. This technique can also be taken advantage of if there is limited time to perform fitting.
 \smallskip \\ \indent
 Once a GMM has been fitted, it can be used for inference. There are two common uses of inference: \textit{density estimation} and \textit{clustering}. This dissertation will focus on clustering because it is most useful for moving object detection. The posterior component assignment probabilities can be estimated using Bayes' theorem combined with the GMM parameters. Knowing the component that a data point most likely belongs to provides a way to group the points into clusters. In the scenario of moving object detection, this would be two clusters: the foreground and the background.
 
@@ -223,18 +203,18 @@ Once a GMM has been fitted, it can be used for inference. There are two common u
 \label{sec:requirements}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-The requirements for this project are listed below. The nature of the project required the development of theoretical knowledge before implementation began, and, as such, the requirements subtly evolved as understanding matured. The original requirements are given in Appendix \ref{app:proposal} for comparison. The final requirements have been grouped into two categories. The first, labelled $A$, are the core requirements deemed essential to the project's success. The second, labelled $B$, are considered extensions, aiming to improve understanding of the components used in the core implementation or further the investigation into the applications of HE in surveillance.
+The requirements for this project are listed below. The nature of the project required the development of theoretical knowledge before implementation began. Consequently, the requirements subtly evolved as understanding matured. The original requirements are given in Appendix \ref{app:proposal} for comparison. The final requirements have been grouped into two categories. The first, labelled $A$, are the core requirements deemed essential to the project's success. The second, labelled $B$, are considered extensions, aiming to improve understanding or further the investigation into HE and surveillance.
 \subsubsection{Core}
 \begin{enumerate}[leftmargin=1.75cm,label=\texttt{A\arabic*:}]
-    \item \textit{Implement a client-server application allowing videos to be homomorphically encrypted and transmitted in both directions.} \smallskip \\ This component is vital because it provides the foundation for implementing and integrating all other components. It is also essential to emulate the MLaaS software stack. While conceptually simple, the nature of HE data adds many challenges to transferring videos, forming a significant portion of the investigation into HE applicability.
-    \item \textit{Implement background subtraction models that can extract moving objects from homomorphically encrypted videos.} \smallskip \\ This requires designing and implementing the five moving object detection algorithms detailed in §\ref{sec:movingObjectDetection} so that they can act on HE data.
+    \item \textit{Implement a client-server application allowing videos to be homomorphically encrypted and transmitted in both directions.} \smallskip \\ This component provides the foundation for implementing and integrating all other components. It is essential for emulating the MLaaS software stack. While conceptually simple, incorporating HE data adds challenges that formed a significant portion of the investigation into HE applicability.
+    \item \textit{Implement background subtraction models that can extract moving objects from homomorphically encrypted videos.} \smallskip \\ This requires designing and implementing the five moving object detection algorithms detailed in §\ref{sec:movingObjectDetection} within the HE domain.
     \item \textit{Evaluate the accuracy of HE inference to investigate its applicability to real systems.} \smallskip \\ This involves analysing different metrics to understand the efficacy of moving object detection on HE data. Comparisons can be made between inference methods and between plain and encrypted data.
 \end{enumerate}
 \subsubsection{Extensions}
 \begin{enumerate}[leftmargin=1.75cm,label=\texttt{B\arabic*:}]
-    \item \textit{Implement a bespoke HE scheme and integrate it into the core application, providing the same functionality as the established scheme already used.} \smallskip \\ While this implementation will likely have worse performance than existing implementations, it will offer helpful insight into the inner workings of HE. Also, it may provide opportunities for optimisations for this specific application.
+    \item \textit{Implement a bespoke HE scheme and integrate it into the core application, providing the same functionality as the established scheme already used.} \smallskip \\ While this implementation will likely have worse performance than existing implementations, it will offer helpful insight into the inner workings of HE. Also, it may provide opportunities for specialisation optimisations.
     \item \textit{Analyse the security of the encryption schemes used in the project.} \smallskip \\ This will be useful in ensuring HE can overcome both security and privacy concerns of existing surveillance solutions and doesn't accidentally introduce insecurities that could allow adversaries to extract information.
-    \item \textit{Implement an object recognition algorithm acting on HE data using neural networks.} \smallskip \\ Implementations like Cryptonets \cite{Dowlin} have demonstrated the application of neural networks to HE. This would allow further services offered by surveillance companies to be emulated and reveal a greater insight into the limitations of HE in video analysis.    
+    \item \textit{Implement an object recognition algorithm acting on HE data using neural networks.} \smallskip \\ Implementations like Cryptonets [DOWLIN] have demonstrated the application of neural networks to HE. This would allow further services offered by surveillance companies to be emulated and reveal a greater insight into the limitations of HE.   
 \end{enumerate}
 
 \setlength{\leftskip}{0cm}
@@ -254,11 +234,11 @@ The results of the \textit{requirements analysis} stage have been detailed in §
 \smallskip \\ \indent
 The \textit{design} phase incorporates expanding on the requirements into a physical project; this includes, for example, creating the class diagrams shown in Figure \ref{fig:clientUML}, Figure \ref{fig:serverUML}, and Figure \ref{fig:mekksUML}.
 \smallskip \\ \indent
-The \textit{implementation} and \textit{testing} stages were intertwined where possible in order to promote a test-driven approach to development. This was made easier by the object-oriented methodology and unit testing practices (see §\ref{sec:testing}) adopted during the design stage.
+The \textit{implementation} and \textit{testing} stages were intertwined where possible in order to promote a test-driven approach to development. This was made easier by the object-oriented methodology and unit testing practices adopted.
 \smallskip \\ \indent
-The \textit{evaluation} stage replaces the \textit{maintenance} stage of the traditional Waterfall model because it is unsuitable for this project. This stage involves running experiments to evaluate the project.
+The \textit{evaluation} stage replaces the \textit{maintenance} stage of the traditional Waterfall model. This stage involves running experiments to evaluate the project. 
 \smallskip \\ \indent
-When working on the extensions, an iterative model was more appropriate. The main reason for this was this section of the project was less understood so riskier than the core components. Consequently, a rapid cyclical development process requiring components to be broken down into smaller units would allow any problems to be discovered sooner, preventing the project from experiencing any costly setbacks. Therefore, development transitioned to an Agile model, depicted in Figure \ref{fig:agile}. Moreover, regular supervisor meetings allowed Agile's sprint system to be utilised so that a prototype of the project could be presented in each meeting to ensure progress was thoroughly tracked.
+When working on extensions, an iterative model was more appropriate. The main reason for this was that less time had been dedicated to researching these components, so implementation was riskier. Consequently, a rapid cyclical development model requiring components to be decomposed would allow any problems to be discovered sooner, limiting impacts. Therefore, the Agile model, depicted in Figure \ref{fig:agile} was selected. Moreover, regular supervisor meetings allowed Agile's sprint system to be utilised so that a project prototype could be presented in each meeting to ensure thorough progression tracking.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/agile.png}
@@ -279,24 +259,23 @@ A Gantt chart of the project's timeline is shown in Figure \ref{fig:gantt}.
 
 \subsection{Testing}
 \label{sec:testing}
-\subsubsection{Challenges}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Unlike traditional software engineering, machine learning does not provide precise criteria against which the correctness of an implementation can be verified. The models used for background subtraction are probabilistic, so the outputs cannot be precisely predicted.  Consequently, a variety of testing methodologies were required.
+Unlike traditional software engineering, machine learning does not provide precise criteria against which correctness can be verified. The models used for background subtraction are probabilistic, so the outputs cannot be precisely predicted.  Consequently, a variety of testing methodologies were required.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Unit Tests}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Designed for testing atomic units of source code, unit testing takes advantage of the independent nature of components written following object-oriented principles to test functions in isolation. It does this by providing known expected, boundary, and erroneous data and ensuring the results of a function match the expected. Unit tests can be automated, making them easy to run repeatedly as changes to the source code are made, ensuring errors aren't introduced.
+Designed for testing atomic units of source code, unit testing utilises the independent nature of components written following object-oriented principles to elements in isolation. It does this by providing known expected, boundary, and erroneous data and ensuring function results match the expected. Unit tests can be automated, making them easy to run repeatedly as changes to the source code are made, ensuring errors aren't introduced.
 \smallskip \\ \indent
-Unit tests were particularly useful when developing a HE scheme from scratch. They verified the correctness of the encoding, encryption, and decryption functions and the HE Boolean circuits automatically and repeatedly.
+Unit tests were particularly useful when completing the first extension for verifying the correctness of the encoding, encryption, and decryption functions and the HE Boolean circuits.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Integration Tests}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-While similar to unit tests, integration tests increase the scope of functionality covered by each test. The goal of integration testing is to ensure separate modules interact correctly. Once unit testing has been completed, these tests take the verified modules, group them into larger aggregates, and provide expected, boundary, erroneous data to ensure the output is correct.
+Integration tests increase the scope of functionality covered by each test. Their goal is to ensure separate modules interact correctly. Once unit testing has been completed, these tests aggregate verified modules and provide similar data to ensure the output is correct.
 \smallskip \\ \indent
 Integration testing was useful in verifying that the software stack functioned correctly. For example, ensuring the client and server communicated correctly. While some integration testing can be automated, more complex engineering work was prioritised over creating a more comprehensive testing suite, so manual integration testing was the primary technique used.
 
@@ -304,7 +283,7 @@ Integration testing was useful in verifying that the software stack functioned c
 \subsubsection{Manual Verification}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Manual verification was used to overcome the challenges of testing the background subtraction models. Since the project involves video data, human inspection provides a good intuition of whether or not a background has been correctly removed. If a more detailed analysis is required, pixel values can be compared to check for expected results, or verify consistency across multiple tests\footnote{While humans are able to perform this verification, simple Python scripts are usually written to make testing more efficient.}. 
+Manual verification was used to overcome the challenges of testing the background subtraction models. Since the project involves video data, human inspection provides a good intuition of if a background has been correctly removed. If a more detailed analysis is required, pixel values can be compared to check for expected results or verify consistency across multiple tests.
 
 \setlength{\leftskip}{0cm}
 
@@ -338,7 +317,7 @@ However, it must be acknowledged that Python is not a language traditionally use
 \subsubsection{Software Development}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-\textit{Visual Studio Code} \cite{VSCode} development environment was used for writing code because of support for Python as well as a wide variety of plugins that allow integration of other valuable tools such as ESLint.  In addition, \textit{Git} \cite{Git} and \textit{GitHub} \cite{Github} were used for version control and source code management, as well as storing a backup of source code. \textit{OneDrive} \cite{OneDrive} was also used to hold another backup, for safety.
+\textit{Visual Studio Code} \cite{VSCode} development environment was used for writing code because of support for Python as well as a wide variety of plugins that allow integration of other valuable tools such as ESLint.  In addition, \textit{Git} \cite{Git} and \textit{GitHub} \cite{Github} were used for version control and source code management. \textit{OneDrive} \cite{OneDrive} was also used to hold another backup for safety.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Encryption Schemes}
@@ -359,7 +338,7 @@ The project uses Microsoft's SEAL library \cite{SEAL}, which provides a C++ impl
 There were two publicly available datasets used in this project:
 \begin{itemize}[leftmargin=1.5cm]
     \item The Moving-MNIST dataset contains ten thousand sequences each of length twenty frames showing two handwritten digits from the standard MNIST dataset moving in a $64 \times 64$ pixel frame. This is a relatively simple dataset to perform moving object detection on because it only contains white objects on a black background. Therefore, it was useful in providing a baseline for the performance of the inference algorithms. \cite{MovingMNIST, MNIST}.
-    \item The LASIESTA dataset contains a variety of sequences showing objects moving across static backgrounds in a range of conditions. Specifically designed to evaluate segmentation algorithms, this dataset provides a more realistic example of surveillance video. Therefore, this dataset can provide a truer evaluation of moving object detection in the HE domain. \cite{LASIESTA}.
+    \item The LASIESTA dataset contains a variety of sequences showing people moving across static backgrounds. Specifically designed to evaluate segmentation algorithms, this dataset provides a more realistic example of surveillance video. Therefore, this dataset can provide a truer evaluation of moving object detection in the HE domain. \cite{LASIESTA}.
 \end{itemize}
 
 \setlength{\leftskip}{0cm}
@@ -367,9 +346,9 @@ There were two publicly available datasets used in this project:
 \setlength{\leftskip}{0.5cm}
 \indent \indent
 All software dependencies in this project use permissive libraries that allow their code to be used without restrictions. The same is true for the datasets. Table \ref{tab:licensing} gives the specific licenses.
-\begin{table}[H]
+\begin{table}[h!]
 \centering
-\def\arraystretch{1.25}
+\def\arraystretch{1}
 \begin{tabular}{|p{5cm}|p{4cm}|}
     \hline
     \textrm{\textbf{Dependency}} & \textrm{\textbf{Licence}} \\
@@ -378,8 +357,9 @@ All software dependencies in this project use permissive libraries that allow th
     \texttt{NumPy} & \\ 
     \texttt{SymPy} & \\
     \hline
-    \texttt{Microsoft SEAL} & \multirow{2}{*}{\textrm{MIT ~\cite{MIT}}} \\
+    \texttt{Microsoft SEAL} & \multirow{3}{*}{\textrm{MIT ~\cite{MIT}}} \\
     \texttt{SEAL-Python} & \\
+    \texttt{PyJoules} & \\
     \hline
     \texttt{Matplotlib} & \multirow{3}{*}{\textrm{PSFL ~\cite{PSFL}}} \\ 
     \texttt{Python} & \\
@@ -397,7 +377,7 @@ All software dependencies in this project use permissive libraries that allow th
 \indent \indent
 The original project proposal mentioned that external computational resources might have been required during the implementation phase, such as AWS or Microsoft Azure. However, the project was entirely developed, tested, and evaluated on a MacBook Pro laptop. The specifications are listed below, in Table \ref{tab:specs}.
 \\
-\begin{table}[H]
+\begin{table}[h!]
 \centering
 \begin{tabular}{>{\hspace{1em}}l l}
     \myheading{\textrm{Processor}}

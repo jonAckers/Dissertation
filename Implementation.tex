@@ -11,13 +11,13 @@ This section is dedicated to detailing the high-level architecture and design of
 \subsection{Framework}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-The project's design began with understanding the MLaaS threat model described in §\ref{sec:threatModel}. Figure \ref{fig:abstractNetwork} depicts a high-level layout of the core components based on this framework. The server-side application has been split into two categories: \textit{online} in red and \textit{offline} in blue. Online describes inference being performed directly in response to a request from the client. Offline describes generating inference results on batches of data, independent of the front-end. 
+The project's design began with understanding the MLaaS threat model described in §\ref{sec:threatModel}. From this, Figure \ref{fig:abstractNetwork} depicts a high-level layout of the project's core components. The components have been split into two categories: \textit{online} and \textit{offline}. Online describes inference being performed directly in response to a request from the user. Offline describes generating inference results on batches of data, independent of the front-end.
 \begin{itemize}
-    \item The online components are where most of this dissertation's discussion occurs. This portion of the application is responsible for emulating the MLaaS model. The \textit{GUI} allows users to select the encryption scheme and inference method used. The user's video is then passed to the \textit{encryption} component, responsible for encrypting data using the selected scheme - either CKKS or MeKKS in the current implementation. The resulting encrypted data is then passed through the \textit{client} to the \textit{server}. In the \textit{inference} component, the received data is privately analysed, and a video containing only the moving objects is returned to the \textit{client} via the \textit{server}. The \textit{decryption} component must then decrypt the inference results and the video played for the user.
-    \item The offline components are intended for use before the application is deployed. The framework's \textit{testing} component refers to developing and refining the inference algorithms used to extract moving objects. The \textit{evaluation} component encompasses the process of evaluating the application, including both inference performance and client-server activity.
+    \item The online components responsible for emulating the MLaaS model are where most of the discussion of this dissertation occurs. The \textit{GUI} allows users to select the encryption scheme and inference method used. The user's video is then passed to the \textit{encryption} component, responsible for encrypting data using the selected scheme - either CKKS or MeKKS. The result is then passed through the \textit{client} to the \textit{server}. In the \textit{inference} component, the data is analysed, and a video containing only the moving objects is returned to the \textit{client} via the \textit{server}. The \textit{decryption} component must then decrypt the inference results and the video played for the user.
+    \item The offline components are intended during implementation and evaluation. The \textit{testing} component refers to developing and refining the inference algorithms used to extract moving objects. The \textit{evaluation} component encompasses evaluating the application, including both inference and networking.
 \end{itemize}
 \indent \indent
-Figure \ref{fig:abstractInference} provides a deeper insight into the composition of the inference component. The scope of this project only considers the layers above encryption primitives. However, it is important to note that lower layers of abstraction exist. In particular, a layer that may be particularly relevant to the investigation begun by this dissertation is the hardware implementation. Hardware modifications could potentially impact the application's performance considerably, both positively and negatively. For example, accelerators, such as GPUs, could be used to perform cryptographic operations ~\cite{Badawi}. Equally, the hardware used in current surveillance implementations may produce weaker results.
+Figure \ref{fig:abstractInference} provides insight into the composition of the inference component. The scope of this project only considers the layers above encryption primitives. However, it is important to note that lower layers of abstraction exist. A layer that may be particularly relevant to this investigation is hardware implementation. Hardware modifications could potentially impact the application's performance considerably, both positively and negatively. For example, accelerators, such as GPUs, could be used to perform cryptographic operations ~\cite{Badawi}. Equally, the hardware used in current surveillance implementations may produce weaker results.
 \begin{figure}[ht]
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
@@ -40,14 +40,14 @@ Figure \ref{fig:abstractInference} provides a deeper insight into the compositio
 \subsection{Software Interface}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-An overview of the project's repository is given in Figure \ref{fig:filetree}. The project was written to clearly distinguish the layers depicted in Figure \ref{fig:abstraction}. The object-oriented approach to design allowed separate components to be implemented independently. As well as aiding comprehension, this architecture was chosen to minimise interaction across abstraction layers, and make the project straightforward to expand with, for example, more HE schemes or inference methods.
+An overview of the project's repository is given in Figure \ref{fig:filetree}. The project was written to clearly distinguish the layers depicted in Figure \ref{fig:abstraction}. The object-oriented approach to design allowed separate components to be implemented independently. As well as aiding comprehension, this architecture was chosen to minimise interaction across abstraction layers and make the project straightforward to expand with more HE schemes or inference methods.
 \smallskip \\ \indent
 The application can be split into four layers of abstraction, from the high-level interface to the low-level implementation.
 \begin{itemize}
-    \item The highest level is the graphical user interface that the user directly interacts with. It allows the user to configure the encryption scheme and inference method used by the server, and upload and receive videos.
+    \item The highest level is the graphical user interface that the user interacts with. It allows the encryption scheme and inference method to be configured, and videos to be uploaded.
     \item The next layer contains the networking functionality of the application. Managed by the \texttt{connection} files in both the \texttt{client} and \texttt{server} packages, this layer is responsible for passing any data between the client and the server.
-    \item The third layer establishes the API for the cryptographic principles. The HE functionality required by the application is contained within this layer so that the particular scheme in use can be substituted without changes to the above layers.
-    \item The lowest level contains the cryptographic primitives. Contained within the \texttt{lib} folder, the libraries \texttt{Seal-Python} and \texttt{MeKKS} contain the implementations of these primitives so that the preceding levels may use them.
+    \item The third layer establishes the API for the cryptographic principles. The HE functionality required by the application is contained within this layer so that the scheme can be easily substituted.
+    \item The lowest level contains the cryptographic primitives. Contained within the \texttt{lib} folder, the libraries \texttt{Seal-Python} and \texttt{MeKKS} contain the implementations of these primitives.
 \end{itemize}
 
 \begin{figure}[htp]     
@@ -59,7 +59,7 @@ The application can be split into four layers of abstraction, from the high-leve
 \subsection{Class Structure}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-This section provides a more thorough insight into the project's structure. Figure \ref{fig:clientUML} details the arrangement of the client-side, Figure \ref{fig:serverUML} contains the classes composing the server-side, and Figure \ref{fig:mekksUML} depicts the structure of the MeKKS library. While there is overlap in these class diagrams, they have been separated into three figures for the sake of clarity.
+This section provides a more thorough insight into the project's structure. Figure \ref{fig:clientUML} details the arrangement of the client-side, Figure \ref{fig:serverUML} contains the classes composing the server-side, and Figure \ref{fig:mekksUML} depicts the structure of the MeKKS library. While overlaps between diagrams exist, they have been separated into three figures for clarity.
 
 \begin{figure}[htp]
     \centering
@@ -97,26 +97,26 @@ This section provides a more thorough insight into the project's structure. Figu
 \section{Encryption}
 \setlength{\leftskip}{0.25cm}
 \indent \indent
-This section briefly discusses the fundamentals of the CKKS HE scheme, as described in the original paper by Cheon et al.\ ~\cite{CKKS}, and how it is implemented in this project.  Also, to provide further insights and an investigation in specialising HE schemes, a bespoke CKKS implementation is detailed, called MeKKS. 
+This section briefly discusses the fundamentals of the CKKS HE scheme, as described in the original paper by Cheon et al.\ \cite{CKKS}, and how it is implemented in this project.  Also, to provide further insights and an investigation in specialising HE schemes, a bespoke CKKS implementation is detailed, called MeKKS. 
 
 \setlength{\leftskip}{0cm}
 \subsection{CKKS Primitives}
 \label{sec:CKKS}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Fundamentally, the CKKS scheme encrypts plaintext polynomials into ciphertext polynomials. Addition and multiplication operations can then be performed on the data, introducing uncertainty to the values. Finally, ciphertext polynomials can be decrypted to retrieve approximations of plaintext polynomials, with the accuracy depending on the number of operations performed.
+Fundamentally, the CKKS scheme encrypts plaintext polynomials into ciphertext polynomials. Addition and multiplication operations can then be performed on the data, introducing uncertainty. Ciphertext polynomials can be decrypted to retrieve approximations of plaintext polynomials, with the accuracy depending on the number of operations performed.
 \smallskip \\ \indent
-Therefore, to encrypt vectors of real values, they must be first be encoded as polynomials in the ring $\mathcal{R} = \mathbb{Z}[X] / (X^N + 1)$, where $N$ is a power of 2. During encoding, the real values must be rounded. To preserve precision, the vector is multiplied by a \textit{scaling factor}, $\Delta$. Once the vector has been encoded into a polynomial in $\mathcal{R}$, it can be encrypted into a \textit{pair} of polynomials: the ciphertext.
+To encrypt vectors of real values, they must first be encoded as polynomials in the ring $\mathcal{R} = \mathbb{Z}[X] / (X^N + 1)$, where $N$ is a power of 2. During encoding, the real values must be rounded so precision is preserved by multiplying by a \textit{scaling factor}, $\Delta$. Once the vector has been encoded, it can be encrypted into a \textit{pair} of polynomials: the ciphertext.
 \smallskip \\ \indent
-Consider two vectors $\vec{v}$ and $\vec{w}$. To encode these vectors, they are scaled to $\Delta \vec{v}$ and $\Delta \vec{w}$.  They can then be encrypted and multiplied to give ciphertext equivalents of $\Delta^2 (\vec{v} \bigodot \vec{w})$. It is clear from this that a sequence of multiplication operations will continue to increase the scale factor indefinitely. To overcome this, CKKS introduces a \textit{rescaling} procedure, which can be understood as dividing the ciphertext by $\Delta$ to reduce the scale.
+Consider two vectors $\vec{v}$ and $\vec{w}$. To encode these vectors, they are scaled to $\Delta \vec{v}$ and $\Delta \vec{w}$.  They can then be encrypted and multiplied to give ciphertext equivalents of $\Delta^2 (\vec{v} \bigodot \vec{w})$. This implies that a sequence of multiplications will increase the scale factor indefinitely. To overcome this, CKKS introduces a \textit{rescaling} procedure, which can be understood as dividing the ciphertext by $\Delta$ to reduce the scale.
 \smallskip \\ \indent
-However, rescaling is not a free operation, so it cannot be continuously applied to allow unlimited multiplications. CKKS is a levelled HE scheme, so each ciphertext resides at a discrete level. Each level has a coefficient modulus $q$ that dictates a ciphertext's coefficients must be in $\mathbb{Z}_q$. When a polynomial is first encrypted, it exists in the maximum level, $L$, with coefficient modulus $Q = q_0 \dot \Delta^L$, for a \textit{base modulus} $q_0$. When a ciphertext is rescaled, the coefficient modulus is divided by $\Delta$, reducing it to $q_0 \cdot \Delta^{L-1}$. Hence, the ciphertext is lowered to the next level. If a ciphertext reaches level 0, no further multiplications can be applied, to preserve the encrypted values. For correct decryption, the coefficients of a polynomial cannot exceed $q_0$. Consequently, in practice, $q_0$ is much larger than $\Delta$.
+However, rescaling is not a free operation, so it cannot be applied to allow unlimited multiplications. CKKS is a levelled HE scheme, so each ciphertext resides at a discrete level. Each level has a coefficient modulus $q$ that dictates a ciphertext's coefficients must be in $\mathbb{Z}_q$. When a polynomial is first encrypted, it exists in the maximum level, $L$, with coefficient modulus $Q = q_0 \dot \Delta^L$, for a \textit{base modulus} $q_0$. When a ciphertext is rescaled, the coefficient modulus is divided by $\Delta$, reducing it to $q_0 \cdot \Delta^{L-1}$. Hence, the ciphertext is lowered to the next level. If a ciphertext reaches level 0, no further multiplications can be applied to preserve the encrypted values. For correct decryption, the coefficients of a polynomial cannot exceed $q_0$. Consequently, in practice, $q_0$ is much larger than $\Delta$.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Encoding and Decoding}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-In CKKS, the plaintext message space is the \textit{cyclotomic polynomial ring} $\mathcal{R} = \mathbb{Z}[X] / \Phi_M(X)$, where $\Phi_M(X)$ is the $M$-th cyclotomic polynomial and $M$ is a power of two. Encoding is the process of mapping a complex vector to an element in $\mathcal{R}$, and decoding is the process of reversing this mapping.
+The plaintext message space is the \textit{cyclotomic polynomial ring} $\mathcal{R} = \mathbb{Z}[X] / \Phi_M(X)$, where $\Phi_M(X)$ is the $M$-th cyclotomic polynomial and $M$ is a power of two. Encoding is the process of mapping a complex vector to an element in $\mathcal{R}$, and decoding is the process of reversing it.
 \smallskip \\ \indent
 Another way of defining decoding is as a mapping of an element $r \in \mathcal{R}$ to a vector in $\mathbb{C}^N$ using the embedding $\sigma : \frac{\mathbb{R}[X]}{X^N + 1} \rightarrow \mathbb{C}^N$. This is applied to each root of $\Phi_M(X)$ through the evaluation of $r$ as
 \begin{equation}
@@ -136,31 +136,8 @@ As a result of the above, the CKKS encoding function has the form given in Equat
 \subsubsection{Operations}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Figure \ref{fig:ckksOps} lists the operations supported by CKKS and their definitions. An important observation is the multiplication of polynomials required during ciphertext multiplication. This makes multiplication a much more computationally expensive operation than addition.
-\begin{figure}[ht]
-    \centering
-    \begin{tcolorbox}
-        \begin{itemize}[leftmargin=0.1cm]
-            \item \texttt{KeyGen} : sample $s \leftarrow \chi_{\text{key}}$, $\vec{r}' \rightarrow \mathcal{R}_{qL}$, $\vec{r}' \rightarrow \mathcal{R}_{P \cdot qL}$, $\vec{e} \leftarrow \chi_{\text{err}}$, and $\vec{e}' \leftarrow \chi_{\text{err}}$.
-            \begin{enumerate}
-                \item Calculate $\vec{a} := - \vec{r} \vec{s} + \vec{e} \mod q_L$ and $\vec{a}' := -\vec{r}' \vec{s} + \vec{e}' + P \vec{s}^2 \mod P \cdot qL$.
-                \item Return $\texttt{SecretKey} := (1, \vec{s})$, $\texttt{PublicKey} := (\vec{a}, \vec{r})$, $\texttt{EvaluationKey} := (\vec{a}', \vec{r}')$.
-            \end{enumerate}
-            \item $\texttt{Enc}_\texttt{PublicKey}(\vec{m})$ : sample $\vec{v} \leftarrow \chi_{\text{enc}}$ and $\vec{e}_0, \vec{e}_1 \leftarrow \chi_{\text{err}}$.
-            \begin{enumerate}
-                \item Calculate $\vec{c}_0 := \vec{v} \cdot \vec{a} + \vec{m} + \vec{e}_0$ and $\vec{c}_1 := \vec{v} \cdot \vec{r} + \vec{e}_1$.
-                \item Return $(\vec{c}_0, \vec{c}_1) \mod q_L$.
-            \end{enumerate}
-            \item $\texttt{Dec}_\texttt{SecretKey}(\vec{c}_0 + \vec{c}_1 \cdot \vec{s}) = (\vec{c}_0 + \vec{c}_1) \mod q_l$.
-            \item $\texttt{Add}((\vec{c}_0, \vec{c}_1), (\vec{d}_0, \vec{d}_1)) = (\vec{c}_0 + \vec{d}_0, \vec{c}_1 + \vec{d}_1) \mod q_l$.
-            \item $\texttt{AddPlain}((\vec{c}_0, \vec{c}_1), x) = (c_0 + \texttt{Enc}_\texttt{PublicKey}(x), \vec{c}_1) \mod q_l$.
-            \item $\texttt{Multiply}((\vec{c}_0, \vec{c}_1), (\vec{d}_0, \vec{d}_1)) = (\vec{r}_0, \vec{r}_1) + (\lfloor P^{-1} \cdot \vec{r}_2 \cdot \texttt{EvaluationKey}_0 \rceil, \lfloor P^{-1} \cdot \vec{r}_2 \cdot \texttt{EvaluationKey}_1  \rceil) \mod q_l$.
-            \item $\texttt{MultiplyPlain}((\vec{c}_0, \vec{c}_1), x) = (\vec{c}_0 \cdot \texttt{Enc}_\texttt{PublicKey}(x), \vec{c}_1 \cdot \texttt{Enc}_\texttt{PublicKey}(x)) \mod q_l$.
-        \end{itemize}
-    \end{tcolorbox}
-    \caption[CKKS Operations]{A list of the basic operations supported by the CKKS scheme. $P$ is a large scaling factor and $\lfloor \cdot \rceil$ denotes rounding to the nearest integer. Recreated from \cite{CKKS}.}
-    \label{fig:ckksOps}
-\end{figure}
+A full list of the operations supported by CKKS and their definitions is included in Appendix \ref{app:operations}.
+
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Rescaling}
@@ -171,7 +148,7 @@ The rescaling function introduced above is defined by equation \ref{eq:rescale}.
     \label{eq:rescale}
     \texttt{Rescale}(\vec{c}, \Delta^{l_\text{new}}) : \mathcal{R}^2_{ql} \times \mathbb{Z}^+ \rightarrow \mathcal{R}^2_{ql} = \lfloor \Delta^{l_\text{new} - l} \cdot \vec{c} \rceil \mod q_{l_\text{new}}
 \end{equation}
-Rescaling truncates some of the least-significant bits of a ciphertext by dividing by a power of the scaling factor. Practically, this is performed after every multiplication to revert the resulting $\Delta^2$ back down to just $\Delta$.  
+Rescaling truncates some of the least-significant bits of a ciphertext by dividing by a power of the scaling factor. Practically, this is performed after every multiplication to scale $\Delta^2$ down to $\Delta$.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Rotations}
@@ -185,7 +162,7 @@ An advantage of RLWE based HE schemes over others is the ability to \textit{rota
 \indent \indent
 SEAL utilises a \textit{residue number system} \cite{RNS} to overcome the slow computations caused by very large polynomial coefficients requiring arbitrary precision arithmetic [RNS]. This exploits the Chinese Remainder Theorem (CRT) to decompose the coefficients in $\mathbb{Z}_q$ into $n$ smaller ones: $\mathbb{Z}_{p_1}, \ldots, \mathbb{Z}_{p_n}$. To do this, the CRT uses a \textit{moduli switching chain} $p_1, \ldots, p_n$ such that $\prod_i p_i = q$ and each $p_i$ is a prime number requiring fewer than 64-bits to store. Thanks to hardware limitations, it is faster to compute the $n$ separate multiplications in $p_1, \ldots, p_n$ than it is to compute a single multiplication in $q$. The results of the separate multiplications can be easily combined thanks to the isomorphism between $\mathbb{Z}_q$ and $\mathbb{Z}_{p_1}, \ldots, \mathbb{Z}_{p_n}$.
 \smallskip \\ \indent
-Unfortunately, as a result of the RNS optimisation, $q_l = q_0 \Delta^l$ cannot always be maintained due to the difficulty of finding every $q_l$ as the product of $n$ primes. To overcome this, SEAL instead defines $q_l = q_0 \prod_{i=1}^l p_i$ where $q_0$ must be prime. Where the original CKKS scheme divides by $\Delta$ to rescale, SEAL divides by $p_l$. Consequently, the resulting scaling factor is only approximately equal to $\Delta$. Therefore, in practice, the scaling factor must be manually reset to $\Delta$ after each multiplication and rescaling\footnote{Setting the scaling factor to $\Delta$ can be achieved by multiplying by a constant close to $1$, or using a ciphertexts \texttt{scale} function if $\Delta$ is known.}, and primes are chosen to be approximately the same size as $\Delta$.
+Unfortunately, as a result of the RNS optimisation, $q_l = q_0 \Delta^l$ cannot always be maintained due to the difficulty of finding every $q_l$ as the product of $n$ primes. To overcome this, SEAL instead defines $q_l = q_0 \prod_{i=1}^l p_i$ where $q_0$ must be prime. Where the original CKKS scheme divides by $\Delta$ to rescale, SEAL divides by $p_l$. Consequently, the resulting scaling factor is only approximately equal to $\Delta$. Therefore, in practice, the scaling factor must be manually reset to $\Delta$ after each multiplication and rescaling.
 
 \setlength{\leftskip}{0cm}
 
@@ -193,7 +170,7 @@ Unfortunately, as a result of the RNS optimisation, $q_l = q_0 \Delta^l$ cannot 
 \label{sec:mekks}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Initially, the goal of implementing the CKKS scheme from first principles was to understand further the fundamental mathematical principles that allow it to work. There were little to no expectations of providing a performance improvement for the reasons detailed in §\ref{sec:mekksLimitations}. However, during the implementation phase, it became apparent that there may be some advantages to a specialised HE scheme that can overcome weaknesses found in SEAL during the earlier stages of development.
+Initially, the goal of implementing the CKKS scheme from first principles, named MeKKS, was to understand its fundamental mathematical principles further. There were little to no expectations of providing a performance improvement. However, during implementation, it became apparent that there were advantages to a specialised HE scheme that can overcome weaknesses found in SEAL.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Limitations}
@@ -202,24 +179,24 @@ Initially, the goal of implementing the CKKS scheme from first principles was to
 \indent \indent
 The primary limitation of MeKKS was the language used for implementation. Traditionally, encryption schemes are written in C or C++ because they are lower-level than most languages, so they run more efficiently. Consequently, the more computationally expensive operations (such as the multiplications between large prime numbers required by CKKS, detailed above) would run much quicker than in Python. 
 \smallskip \\ \indent
-Another limitation was the number of optimisations that could be applied. Since the focus of the implementation was on understanding, the implementation began with the foundational CKKS scheme. However, since this scheme was released, many optimisations have been produced. For example, using residue number systems, bootstrapping extensions, or reduced approximation error ~\cite{RNS,BootstrappingHEAAN, RAE}. The opportunities for developing MeKKS are extensive. However, it was essential to define a clear endpoint for the implementation for the sake of scheduling the project and the inflexible final deadline. Therefore, the performance expectations compared to SEAL - which has had years of development from a team of experts - were further bounded.
+Another limitation was the number of optimisations that could be applied. Since the focus of the implementation was on understanding, the implementation began with the foundational CKKS scheme. However, since this scheme was released, many optimisations have been produced. For example, using residue number systems, bootstrapping extensions, or reduced approximation error ~\cite{RNS, BootstrappingHEAAN, RAE}. The opportunities for developing MeKKS are extensive. However, it was essential to define a clear endpoint for the implementation to schedule the project. Therefore, the performance expectations compared to SEAL were significantly bounded.x
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Implementation}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-The first iteration of MeKKS implementation began using the scheme outlined by Cheon et al. in 2016. This allowed all of the functionality described in §\ref{sec:CKKS} to be implemented, and the API constructed following SEAL to allow for easy integration into the core application.
+The first iteration of MeKKS implementation began using the scheme outlined by Cheon et al.\ in 2016 ~\cite{CKKS}. This allowed all of the functionality described in §\ref{sec:CKKS} to be implemented following the SEAL API, allowing for easy integration with the existing application.
 \smallskip \\ \indent
-However, the performance of this implementation meant it was infeasible to integrate into the rest of the application. Therefore, the next iteration of the HEAAN paper was used to add a bootstrapping procedure, dramatically speeding up computation ~\cite{BootstrappingHEAAN}. Taking advantage of the \textit{approximate computation} characteristic of this encryption scheme, the bootstrapping approach aims to evaluate the decryption formula approximately so that an encryption of the original message can be obtained in a large ciphertext modulus. Hence, an approximation of the \textit{modular reduction} formula is implemented such that it can be efficiently evaluated using standard HE arithmetic operations - where the error induced by the approximation is small enough to maintain precision.
+However, the performance of this implementation meant it was infeasible to integrate into the rest of the application. Therefore, the bootstrapping procedure from the next HEAAN iteration was used to speed up computation ~\cite{BootstrappingHEAAN}. Bootstrapping takes advantage of the \textit{approximate computation} characteristic of HEAAN to evaluate the decryption formula approximately so an encryption of the original message can be obtained in a large ciphertext modulus. Hence, an approximation of the \textit{modular reduction} formula is implemented such that it can be efficiently evaluated using standard operations - where the error induced by the approximation is small enough to maintain precision.
 \smallskip \\ \indent
-Using the observation that the modular reduction function, $F(t) = [t]_q$, is the identity nearby zero and periodic in $q$, bootstrapping uses a trigonometric function to approximate the function when $t = \langle \texttt{Ciphertext}, \texttt{SecretKey} \rangle$ is close to a multiple of $q$ (the ciphertext modulus). Specifically, using the \textit{sine} function in the formula given by Equation \ref{eq:bootstrapping}.
+Using the observation that the modular reduction function, $F(t) = [t]_q$, is the identity near zero and periodic in $q$, bootstrapping uses a trigonometric function to approximate the function when $t = \langle \texttt{Ciphertext}, \texttt{SecretKey} \rangle$ is close to a multiple of $q$ (the ciphertext modulus). Specifically, using the \textit{sine} function given by Equation \ref{eq:bootstrapping}.
 \begin{equation}
     \label{eq:bootstrapping}
     [\langle \texttt{Ciphertext}, \texttt{SecretKey} \rangle]_q = \frac{q}{2 \pi} \cdot \sin \left( \frac{2 \pi}{q} \cdot \langle \texttt{Ciphertext}, \texttt{SecretKey} \rangle \right) + O(\epsilon^3 \cdot q)
 \end{equation}
 when $F(\langle \texttt{Ciphertext}, \texttt{SecretKey} \rangle) < \epsilon \cdot q$.
 \smallskip \\ \indent
-The Taylor polynomial can be used to approximate the trigonometric function so that it can be calculated in the HE domain. The input, $t$, is bounded by $K \cdot q$ for some constant $K = O(\lambda)$, where $\lambda$ is the security parameter. The degree of the Taylor polynomial should be at least $O(K \cdot q)$ in order to make the error term small enough on the interval $(-K \cdot q, K \cdot q)$. Cheon et al.\ proposed using the \textit{Paterson-Stockmeyer} method to reduce the complexity of these calculations ~\cite{BootstrappingHEAAN, Paterson}. However, the complexity of recryption grows exponentially with the depth of the decryption circuit, which still has a substantial impact.
+The Taylor polynomial can be used to approximate the trigonometric function so that it can be evaluated in the HE domain. The input, $t$, is bounded by $K \cdot q$ for some constant $K = O(\lambda)$, where $\lambda$ is the security parameter. The degree of the Taylor polynomial should be at least $O(K \cdot q)$ in order to make the error term small enough on the interval $(-K \cdot q, K \cdot q)$. Cheon et al.\ proposed using the \textit{Paterson-Stockmeyer} method to reduce the complexity of these calculations ~\cite{BootstrappingHEAAN, Paterson}. However, the complexity of recryption grows exponentially with the depth of the decryption circuit, which still has a substantial impact.
 \smallskip \\ \indent
 Figure \ref{fig:bootstrapping} provides a graphical representation of the bootstrapping approximation.
 \begin{figure}[ht]
@@ -233,9 +210,9 @@ Figure \ref{fig:bootstrapping} provides a graphical representation of the bootst
 \subsubsection{Optimisations}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-The principal optimisations of MeKKS came through the methods of data representation. When integrating SEAL into the project, a Python wrapper for a C++ implementation was used. Consequently, the application was forced to handle large C++ objects, hidden by a further layer of abstraction via the wrapper. Therefore, Python struggled to manipulate these objects efficiently, specifically during the networking stages of execution. As explained in §\ref{sec:networking}, the bottleneck for SEAL's performance was in data serialisation. However, since MeKKS was written in Python, the underlying functionality provided much more efficient manipulation as it could directly interact with the objects and their attributes.
+The principal optimisations of MeKKS came through data representation. When integrating SEAL, a Python wrapper for a C++ implementation was used. Consequently, the application was forced to handle large C++ objects, abstracted through the wrapper. Therefore, Python struggled to manipulate these objects efficiently, specifically when serialising data for transmission. However, since MeKKS was written in Python, the underlying functionality provided much more efficient manipulation as it could directly interact with the objects and their attributes.
 \smallskip \\ \indent
-Another optimisation came through the specialisation of the library. The project planning ensured MeKKS was only implemented once the application's core had been complete. As a result, the functionality required had been investigated and almost wholly finalised. Therefore, only the components needed for each class in MeKKS were implemented. This further reduced the size of objects and removed any unnecessary computations, making execution more efficient. For example, the most expensive operations offered by SEAL are rotations. However, since the application did not use them, they were ignored during the implementation of MeKKS.
+Another optimisation came through the specialisation of the library. The project schedule ensured MeKKS was only implemented once the application's core had been complete. As a result, the functionality required had been finalised and only needed operations were implemented for MeKKS. This further reduced the size of objects and removed any unnecessary computations, making execution more efficient. For example, the most expensive operations offered by SEAL are rotations. However, since the application did not use them, they were ignored during the implementation of MeKKS.
 
 \setlength{\leftskip}{0cm}
 
@@ -245,66 +222,32 @@ Another optimisation came through the specialisation of the library. The project
 \label{sec:networking}
 \setlength{\leftskip}{0.25cm}
 \indent \indent
-This section is dedicated to detailing the techniques investigated for tackling the networking portion of the project. An established limitation of HE is its impact on memory usage ~\cite{Makkaoui}. Consequently, the \textit{transmission time} of data is significantly impaired. Given a video file, the \textit{transmission time} can be defined by Equation \ref{eq:transmission}.
+This section details the techniques investigated for optimising communication between the client and server. An established limitation of HE is the size of ciphertexts ~\cite{Makkaoui}. Consequently, the \textit{transmission time} of data is significantly impaired. The \textit{transmission time} can be defined by Equation \ref{eq:transmission}.
 \begin{equation}
     \text{transmission time} = \frac{\text{video size }\textit{(bytes)}}{\text{transmission rate }\textit{(bytes/second)}}
     \label{eq:transmission}
 \end{equation}
 \indent \indent
-The core design of this project focused on emulating the MLaaS model employed by surveillance technology companies. Therefore, transferring large volumes of data to the cloud is a critical component, so a substantial portion of the investigation was considering how to reduce the effect of HE on uploading videos. The problem was considered from two angles: attempting to reduce the \textit{video size} (see §\ref{sec:seamCarving} and §\ref{sec:graphReps}) and attempting to increase the \textit{transmission rate} (see §\ref{sec:parallelisation}).
+Transferring large volumes of data to the cloud is a critical component of the MLaaS model, so a substantial portion of the investigation was dedicated to reducing transmission time. The problem was considered from two angles: attempting to reduce the \textit{video size} and attempting to increase the \textit{transmission rate}.
 
 \setlength{\leftskip}{0cm}
-\subsection{Memory Requirements}
+\subsection{Video Size}
 \subsubsection{Seam Carving}
 \label{sec:seamCarving}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Developed by Avidan and Shamir in 2007, \textit{seam carving} describes a method of resizing images using \textit{geometric constraints} while also considering \textit{image content} ~\cite{SeamCarving}. The advantage of accounting for both aspects is that an image can be resized to some target dimensions while preserving important features, such as people or buildings. There are two categories of methods for distinguishing these features. Firstly, \textit{top-down} methods use tools such as \textit{face detectors} to highlight were the features appear in the image ~\cite{Viola}. Whereas a \textit{bottom-up} approach uses \textit{saliency maps}\footnote{a representation highlighting the regions of an image where a persons' eyes are first drawn, see \cite{Saliency}.} to locate the most important ~\cite{Itti}.
+Developed by Avidan and Shamir in 2007, \textit{seam carving} describes a method of resizing images using \textit{geometric constraints} while also considering \textit{image content} ~\cite{SeamCarving}. Consequently, an image can be resized while preserving important features, such as people or buildings. There are two categories for distinguishing these features. Firstly, \textit{top-down} methods use tools such as \textit{face detectors} to highlight were the features appear in the image ~\cite{Viola}. Whereas a \textit{bottom-up} approach uses saliency maps\footnote{a representation highlighting the regions of an image where a person's eyes are first drawn, see ~\cite{Saliency}.} to locate the most important ~\cite{Itti}.
 \smallskip \\ \indent
-However, instead of focussing on the most critical pixels of an image, seam carving targets the least important - those that ``won't be noticed'' if removed. To do this, it defines an \textit{energy function} for each pixel in an image. The original paper proposes multiple energy functions, beginning with the function shown in Equation \ref{eq:energy1} before developing Equation \ref{eq:energy2}.
-\begin{equation}
-    \label{eq:energy1}
-    e(\vec{I}) = \left| \frac{\partial}{\partial x} \vec{I} \right| + \left| \frac{\partial}{\partial y} \vec{I} \right|
-\end{equation}
-\begin{equation}
-    \label{eq:energy2}
-    e_{\textit{HoG}}(\vec{I}) = \frac{\left| \frac{\partial}{\partial x} \vec{I} \right| + \left| \frac{\partial}{\partial y} \vec{I} \right|}{\max{(\textit{HoG}(\vec{I}(x,y)))}}
-\end{equation}
-where $\textit{HoG}(\vec{I}(x,y))$ is a histogram of oriented gradients at every pixel. The paper recommended an eight-bin histogram over an eleven-pixel square window around each pixel. Figure \ref{fig:scEnergy} depicts the application of an energy function to an example image.
+The details of the original seam carving paper, as well as a depiction of the algorithm, are included in Appendix \ref{app:seamCarving}. However, a more advanced algorithm was implemented for this investigation to provide more optimal results.
 \smallskip \\ \indent
-Once the energy of each pixel has been calculated, the image can be split into \textit{seams}. A \textit{vertical seam} is a path of pixels connecting the top of an image to the bottom, such that there is only a single pixel from each column in the path. A \textit{horizontal seam} is a path of pixels connecting the left of an image to the right, such that there is only a single pixel from each column in the path. Formally, this is defined by Equation \ref{eq:vSeam} and Equation \ref{eq:hSeam} for vertical and horizontal seams respectively.
-\begin{subequations}
-    \begin{equation}
-        \label{eq:vSeam}
-        \vec{s}^\vec{x} = \{s^x_i\}^n_{i=1} = \{(x(i), i) \: s.t. \: \forall i \: |x(i) - x(i-1)| \leq 1\}^n_{i=1}
-    \end{equation}
-    \begin{equation}
-        \label{eq:hSeam}
-        \vec{s}^\vec{y} = \{s^y_j\}^m_{j=1} = \{(j, y(j)) \: s.t. \: \forall j \: |y(j) - y(j-1)| \leq 1\}^m_{j=1}
-    \end{equation}
-\end{subequations}
-For an $n \times m$ image, \vec{I}, where $x : [1, \ldots, n] \rightarrow [1, \ldots, m]$ and $y : [1, \ldots, m] \rightarrow [1, \ldots, n]$. Figure \ref{fig:scSeams} depicts generating seams from pixel energies.
-\smallskip \\ \indent
-From this set, the \textit{optimal seam} is found. That is, the seam that minimises the \textit{seam cost} in Equation \ref{eq:seamCost}. Some implementations will calculate this seam using a variant of Dijkstra's algorithm, but a more common method is to use dynamic programming to implement Equation \ref{eq:dpSeamCarving} (for vertical seams - the definition of $M$ for horizontal seams is similar).
-\begin{equation}
-    \label{eq:seamCost}
-    E(\vec{s}) = E(\vec{I_s}) = \sum^n_{i=1} = e(\vec{I}(s_i))
-\end{equation}
-\begin{equation}
-    \label{eq:dpSeamCarving}
-    M(i, j) = e(i,j) + \min{(M(i-1, j-1), M(i-1, j), M(i-1, j+1))}
-\end{equation}
-\indent
-Building on the original algorithm, this project implements the \textit{forward energy} function developed by Rubinstein et al.\ ~\cite{Rubinstein}. Another dynamic programming algorithm, forward energy, improves the selection of the optimal seam in iteration $i$ by accounting for the impact on energy in the iteration $i+1$ of the algorithm and iteration $i$. To do this, the \textit{energy difference} function is defined by Equation \ref{eq:energyDiff}, where $C$ is the cost of removing the seam. 
+To quantify the importance of a pixel, seam carving defines an \textit{energy function}. Rubinstein et al.\ \cite{Rubinstein} proposed the \textit{forward energy} function using dynamic programming. This method calculates the energy of a pixel by accounting for the impact on future energies if it is removed. To achieve this, the \textit{energy difference} function is defined by Equation \ref{eq:energyDiff}. The cost of removing pixels, $C$, is measured as the forward differences between the pixels that would become neighbours after deletion. There are three cases for this: diagonally adjacent in each direction and orthogonally adjacent, depicted by Figure \ref{fig:adjacency} and defined by Equation \ref{eq:adjacency}.
 \begin{equation}
     \label{eq:energyDiff}
     \Delta E_{i+1} = E(\vec{I}_{i+1}) - (E(\vec{I}_i) - E(C_i))
 \end{equation}
-\indent
-Consequently, this criterion looks forward to the resulting image to search for the seam, which would inject minimal energy. The cost of removing a seam is measured as the forward differences between the pixels that become neighbours once the seam is removed. There are three cases for this, the pixels are diagonally adjacent in either direction, or the pixels are orthogonally adjacent, as demonstrated by Figure \ref{fig:adjacency} and formalised by Equation \ref{eq:adjacency}. From this, the Equation \ref{eq:dpSeamCarving} can be updated to become Equation \ref{eq:forwardEnergy}.
-\begin{figure}[htp]
+\begin{figure}
     \scalebox{0.78}{\input{figures/forwardEnergy}}
-    \caption[Potential Seam Costs]{There are three possible vertical seam costs for pixel $(i, j)$. After removing the seam, new neighbours (blue) and new edges (red) are created.}. 
+    \caption[Potential Seam Costs]{There are three possible vertical seam costs for pixel $(i, j)$. After removing the seam, new neighbours (blue) and new edges (red) are created.}
     \label{fig:adjacency}
 \end{figure}
 \begin{align}
@@ -319,6 +262,21 @@ Consequently, this criterion looks forward to the resulting image to search for 
         C_R(i, j) &= |\vec{I}(i, j+1) - \vec{I}(i, j-1)| + |\vec{I}(i-1, j) - \vec{I}(i, j+1)|
     \end{split}
 \end{align}
+\indent
+Once the energy has been calculated, the image can be split into \textit{seams}. A \textit{vertical seam} is a path of pixels connecting the top of an image to the bottom, such that there is only a single pixel from each row in the path. Likewise, a \textit{horizontal seam} connects the left of an image to the right, such that only a single pixel from each column is included. Formally, this is defined by Equation \ref{eq:vSeam} and Equation \ref{eq:hSeam} respectively.
+\begin{subequations}
+    \begin{equation}
+        \label{eq:vSeam}
+        \vec{s}^\vec{x} = \{s^x_i\}^n_{i=1} = \{(x(i), i) \: s.t. \: \forall i \: |x(i) - x(i-1)| \leq 1\}^n_{i=1}
+    \end{equation}
+    \begin{equation}
+        \label{eq:hSeam}
+        \vec{s}^\vec{y} = \{s^y_j\}^m_{j=1} = \{(j, y(j)) \: s.t. \: \forall j \: |y(j) - y(j-1)| \leq 1\}^m_{j=1}
+    \end{equation}
+\end{subequations}
+for an $n \times m$ image, \vec{I}, where $x : [1, \ldots, n] \rightarrow [1, \ldots, m]$ and $y : [1, \ldots, m] \rightarrow [1, \ldots, n]$.
+\smallskip \\ \indent
+Using these definitions and the energy function, the \textit{optimal seam} can be found. That is, the seam that minimises the \textit{seam cost} - the sum of all pixel costs in the path. Some implementations will use variants of Dijkstra's algorithm for this. Alternatively, Equation \ref{eq:forwardEnergy} defines a dynamic programming approach.
 \begin{equation}
     \label{eq:forwardEnergy}
     M(i, j) = e(i, j) + \min 
@@ -329,50 +287,16 @@ Consequently, this criterion looks forward to the resulting image to search for 
     \end{cases}
 \end{equation}
 \indent
-It is important to note that there have been several extensions to seam carving that may apply to this project. In particular, optimisations for videos by introducing two-dimensional seams to allow time to be accounted for, and implementations using GPUs to reduce execution time ~\cite{Rubinstein, Duarte}.
-
-
-\begin{figure}[htp]
-    \begin{subfloatrow}
-        \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=3.7cm}}]{figure}[\FBwidth]
-        {\caption{Original image.}}
-        {\includegraphics[scale=.7]{figures/seamCarving1.png}}
-    \end{subfloatrow}
-    \begin{subfloatrow}
-        \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=5cm}}]{figure}[\FBwidth]
-        {\caption{The energy of each pixel.}\label{fig:scEnergy}}
-        {\includegraphics[scale=.7]{figures/seamCarving2.png}}
-    \end{subfloatrow}
-    \begin{subfloatrow}
-        \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=5cm}}]{figure}[\FBwidth]
-        {\caption{Potential seams to delete.}\label{fig:scSeams}}
-        {\includegraphics[scale=.7]{figures/seamCarving3.png}}
-    \end{subfloatrow}
-    \begin{subfloatrow}
-        \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=11cm}}]{figure}[\FBwidth]
-        {\caption{Low energy seams removed.}\label{fig:scRemoved}}
-        {\includegraphics[scale=.7]{figures/seamCarving4.png}}
-    \end{subfloatrow}
-    \begin{subfloatrow}
-        \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=9.5cm}}]{figure}[\FBwidth]
-        {\caption{Resulting image.}}
-        {\includegraphics[scale=.7]{figures/seamCarving5.png}}
-    \end{subfloatrow}
-    \caption[Seam Carving Stages]{Each stage of the seam carving algorithm. Images taken from \cite{wikiSeamCarving}.}
-\end{figure}
+It is important to note that there have been several extensions to seam carving that may apply to this project. Particularly, optimisations for videos by introducing two-dimensional seams to allow time to be accounted for, and implementations using GPUs to reduce execution time ~\cite{Rubinstein, Duarte}.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Graph Representation}
 \label{sec:graphReps}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-There are several advantages to representing an image using a graph. Firstly, graphs are discrete, mathematically simple objects that are well-suited to developing efficient, provably correct algorithms. Also, graph theory is a well-established research area with a wide variety of existing algorithms and theorems that can be utilised. More pertinent to this dissertation, graphs provide minimalistic representations of images that are flexible enough to account for different image types.
+Representing images using graphs has several advantages. Firstly, graphs are discrete, mathematically simple objects with an established set of provably correct algorithms. More pertinent to this investigation, graphs provide flexible representations that can be used to tune image size.
 \smallskip \\ \indent
-Graph-based image processing methods operate on \textit{pixel adjacency graphs}. More specifically, graphs whose vertex set is the set of image elements and edge set is given by an adjacency relation between image elements. A common approach to this uses the \textit{Euclidean adjacency relation} to define the edge set, formalised by Equation \ref{eq:adjacency}.
-\begin{equation}
-    d(v, w) \leq \rho
-\end{equation}
-for all vertices $v$, $w$ in the vertex set.  An example of some pixel adjacency graphs is given by Figure \ref{fig:pixelAdjacency}. When handling video files, three-dimensional pixel adjacency graphs are used to account for relationships between video frames. An example of these is depicted by Figure \ref{fig:3dAdjacency}.
+Graph-based image processing methods operate on \textit{pixel adjacency graphs} - graphs whose vertex set is the set of image pixels and edge set defines adjacency of pixels. An example of some pixel adjacency graphs is given by Figure \ref{fig:pixelAdjacency}. Three-dimensional pixel adjacency graphs account for relationships between video frames when handling video files. An example of these is depicted by Figure \ref{fig:3dAdjacency}.
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.29\textwidth}
@@ -420,18 +344,17 @@ for all vertices $v$, $w$ in the vertex set.  An example of some pixel adjacency
     \label{fig:3dAdjacency}
 \end{figure}
 \smallskip \\ \indent
-The pixel adjacency graphs can na\"ively be applied to any image by creating a node for each pixel and an edge for every adjacency. While this does provide some opportunity for optimisations in regards to inference algorithms, it is unlikely to reduce the \textit{video size}, so it will have little positive impact on \textit{transmission time}.
-\smallskip \\ \indent
-However, all hope is not lost. Improvements can be made to this representation to reduce the overall size of each frame in the video. Primarily, the pixel adjacency graph can be extended to become \textit{region adjacency graphs}. In this case, rather than representing each individual pixel with a node, similar regions of an image are amalgamated into a single node, reducing the number of elements that need to be transmitted. Figure \ref{fig:pixelToRegion} provides a pictorial example of this.
-\begin{figure}[htp]
+However, to improve the video size, pixel adjacency graphs must be extended to \textit{region adjacency graphs}. In this case, rather than representing each pixel with a node, pixels are amalgamated into regions represented by a single node. Figure \ref{fig:pixelToRegion} provides a pictorial example of this.
+\begin{figure}[h!]
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.49\textwidth}
         \centering
         \captionsetup{justification=centering}
         \scalebox{0.5}{\input{figures/pixelToRegion1}}
         \caption{A pixel adjacency graph.}
     \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
         \centering
         \captionsetup{justification=centering}
         \scalebox{0.5}{\input{figures/pixelToRegion2}}
@@ -441,14 +364,10 @@ However, all hope is not lost. Improvements can be made to this representation t
     \label{fig:pixelToRegion}
 \end{figure}
 \smallskip \\ \indent
-To achieve this, the notion of similarity of pixels must be quantified. An unsophisticated method might convert the pixel adjacency graph into a weighted graph, creating a formula converting the difference in the intensity of the pixels to a weight. An example of this is normalising the difference between values - if the pixels have precisely the same intensity, give their edge a weight of $1$; if they are exact opposites (i.e., one black and one white), give their edge a weight of $0$. Once this has been completed, nodes with sufficiently high weight can be combined into a single node. 
+To achieve this, the notion of similarity between pixels must be quantified. Perhaps surprisingly, this is another image segmentation problem. Consequently, established algorithms producing valid solutions exist. Unsupervised clustering algorithms such as \textit{the watershed transform} \cite{Watershed} or \textit{k-means clustering} \cite{KMeans} are two such methods that have proved useful in existing works.
 \smallskip \\ \indent
-Immediate issues begin to arise when considering this method. Firstly, what function should be used to assign weights? Secondly, how should nodes be combined if the pixels have different values? Should the mean value be taken? The median? One chosen at random? Moreover, how many nodes should be combined? What will happen if too many or too few are collected together?
-\smallskip \\ \indent
-The concerns surrounding weighting edges indicate that this problem may be more complicated than it first appears. In fact, grouping the nodes is a form of low-level image segmentation. While this makes the problem more computationally complex, it has the advantage that there exist well-established algorithms providing reasonable solutions to it. Unsupervised clustering algorithms such as \textit{the watershed transform} \cite{Watershed} or \textit{k-means clustering} \cite{KMeans} are two such methods that have been applied to this problem previously.
-\smallskip \\ \indent
-More importantly to this investigation, the number of regions in the image will directly impact the transmission time. Reducing the number of nodes in the graph is advantageous because it reduces the amount of data transmitted. However, in doing so, it also reduces the image's resolution. Consequently, removing too many nodes from the graph will remove any clarity of the contents of the image, making the process worthless. Figure \ref{fig:regions} depicts this. Therefore, this balance must be struck heuristically to find the optimal point between maximising performance benefits and minimising loss of image data. Moreover, this optimal point is likely to be different for every image, adding a further layer of complexity.
-\begin{figure}[htp]
+Using similar techniques to seam carving, it is possible to make this trade-off less severe. For example, \textit{Foveal sampling} is a method of recreating the visual activity of the eye when determining regions ~\cite{Foveal}. The \textit{Fovea centralis} is a region of the retina responsible for the sharp central vision used by mammals to focus on particular objects. Consequently, its shape can be used to bias the placement of nodes of a graph to prioritise more critical areas. This allows the region budget to be used more efficiently to reduce noticeable quality reduction. Other techniques have been developed using saliency maps or similar.
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[t]{0.29\textwidth}
         \centering
@@ -502,9 +421,9 @@ Using similar techniques to seam carving, it is possible to make this trade-off 
 \label{sec:parallelisation}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Where the previous sections aimed to improve video transmission time by reducing the size of video files, this section targets the bottlenecks limiting the transmission rate of the system. To do this, the project investigates the application of parallel computing.
+Where the previous sections aimed to improve video transmission time by reducing the size of video files, this section targets the bottlenecks limiting the transmission rate of the system. To do this, the project investigates the application of \textit{parallel} and \textit{concurrent} computing.
 \smallskip \\ \indent
-Parallel computing is often conflated with \textit{concurrent computing}. However, the terms are distinct, and can exist both separately and together. In parallel computing, a task is broken down into numerous, very similar sub-tasks that can be completed independently and recombined later ~\cite{ParallelismVsConcurrency}. In concurrent computing, the various sub-tasks will address unrelated processes varying in nature, often requiring inter-process communication during execution ~\cite{ParallelismVsConcurrency}. This area of the project began considering parallelisation alone to attempt to maximise performance gains, but expanded into concurrency as the breadth of functionality that could benefit from these modifications became apparent. In Figure \ref{fig:parallelStack}, the abstract layers of the networking processes have been coloured to indicate whether concurrent or parallel computing is used.
+Parallel computing is often conflated with \textit{concurrent computing}. However, the terms are distinct. Parallel computing means a task is broken down into numerous similar sub-tasks that can be completed independently ~\cite{ParallelismVsConcurrency}. Concurrent computing means each sub-task will address unrelated processes, often requiring inter-task communication ~\cite{ParallelismVsConcurrency}. In Figure \ref{fig:parallelStack}, the abstract layers of the networking processes have been coloured to indicate whether concurrent or parallel computing is used.
 \begin{figure}[htp]
     \centering
     \scalebox{0.6}{\input{figures/parallelStack}}
@@ -513,10 +432,11 @@ Parallel computing is often conflated with \textit{concurrent computing}. Howeve
     \label{fig:parallelStack}
 \end{figure}
 \smallskip \\ \indent
-Traditionally, computer design has focussed on \textit{serial computation}. To solve a computational problem, a sequence of instructions was written, they were executed in order, and a result was returned. As predicted by Moore's law, technology scaling was able to double the performance of processors so that they could compute more complex expressions more efficiently for decades ~\cite{Moore}. However, factors like Dennard scaling mean this cannot last forever ~\cite{Dennard}. Therefore, to continue improving performance, computer architects turned to multiprocessing. Rather than making processor components more efficient so that a single instruction executes faster, similar performance gains can be made by executing multiple instructions simultaneously. Consequently, since evidence suggests processors will continue to be optimised to parallel computation, this seemed like a viable opportunity for investigating where performance might be gained in future iterations of surveillance technology.
+These techniques were selected for investigation because of the growing trend of support in computer architecture. Traditionally, computer design has focussed on \textit{sequential computation} to improve performance. However, factors such as Dennard scaling \cite{Dennard} mean the improvements predicted by Moore's law \cite{Moore} may not continue indefinitely. Therefore, architects are utilising multiprocessing to gain similar gains. Consequently, this seemed like a viable opportunity for the investigation to consider future iterations of surveillance technology.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Communication}
+\label{sec:communication}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
 Parallelisation already exists in some communication protocols. The \textit{transmission control protocol} (TCP) uses a \textit{sliding window protocol} to send a group of data packets concurrently, ensuring they are ordered correctly at the receiving end. Figure \ref{fig:slidingWindow} depicts this. This and similar protocols exist in the \textit{data-link} layer of the \textit{OSI network model}. The goal of this section of the investigation was to attempt to move the parallelisation higher up the abstract stack.
@@ -535,19 +455,19 @@ Parallelisation already exists in some communication protocols. The \textit{tran
     \label{fig:slidingWindow}
 \end{figure}
 \smallskip \\ \indent
-Taking inspiration from sliding windows, instead of sending all video data in a single stream, videos are split into frames, and each frame is divided into packets. Meanwhile, a pool of threads can be created to represent the size of the window. When a packet is ready to be sent, it is assigned a thread from the pool, and the thread establishes a connection with the server, transmitting the data. Consequently, multiple connections will be open in parallel, so, in a given moment, more data will be sent.
+Taking inspiration from sliding windows, instead of sending all video data in a single stream, videos are split into frames, and each frame is divided into packets. Meanwhile, a pool of threads can be created to represent the size of the window. When a packet is ready to be sent, a thread is assigned and establishes a connection with the server. Consequently, multiple connections will be open in parallel, allowing more data to be sent. 
 \smallskip \\ \indent
-However, there are limitations to this technique. Firstly, more data will have to be transmitted than in sequential communication. The algorithm is non-deterministic, so there can be no guarantees about the order in which the packets will arrive after transmission. Consequently, further information must be provided to ensure videos are reassembled correctly. More specifically, a frame number and packet identifier will have to be attached to each packet. While this is worth noting, the size of this additional data is negligible compared to HE data, so it is not a critical issue.
+However, there are limitations to this technique. Firstly, more data will have to be transmitted than in sequential communication. The algorithm is non-deterministic, so there can be no guarantees about the order in which the packets will arrive after transmission. Consequently, further information must be provided to ensure videos are reassembled correctly. While this is worth noting, the size of this additional data is negligible compared to HE data, so it is not a critical issue. 
 \smallskip \\ \indent
-A more pressing concern is the overhead of creating threads and establishing connections. The cost is such that creating too many threads will remove parallelisation benefits or even go so far as to make data transmission slower. Consequently, an optimal balance between the cost of parallelisation and the amount of data to send must be found to maximise gains from this approach.
+A more pressing concern is the overhead of creating threads and establishing connections. The cost is such that creating too many threads will remove parallelisation benefits or make transmission slower. Consequently, an optimal balance between the cost of parallelisation and the amount of data to send must be found to maximise gains from this approach.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Data Manipulation}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Splitting videos into small packets has further advantages. Before data can be sent from the client to the server, and vice versa, it must be prepared. This can be referred to as \textit{packing} the data. Similarly, when it arrives at its destination, data must be reorganised, or \textit{unpacked}.
+Splitting videos into small packets has further advantages. Before data can be transmitted, it must be prepared, or \textit{packed}. Equivalently, when data arrives at its destination, data must be \textit{unpacked}.
 \smallskip \\ \indent
-Succinctly depicted by Figure \ref{fig:packingAndUnpacking}, there are three distinct stages of the packing in the client \textit{encryption}, \textit{compression}, and \textit{serialisation}. The unpacking process will reverse these stages in order. In the server-side of the project, the encryption and decryption operations are missing from these pipelines.
+Depicted by Figure \ref{fig:packingAndUnpacking}, there are three distinct stages of packing in the client \textit{encryption}, \textit{compression}, and \textit{serialisation}. The unpacking process will reverse these stages in order. In the server-side of the project, the encryption and decryption operations are unsurprisingly missing from these pipelines.
 \begin{figure}[htp]
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
@@ -565,9 +485,9 @@ Succinctly depicted by Figure \ref{fig:packingAndUnpacking}, there are three dis
     \label{fig:packingAndUnpacking}
 \end{figure}
 \smallskip \\ \indent
-In a na\"ive implementation, each pixel of a video would be encoded and encrypted independently. However, the CKKS scheme operates on vectors of real values. Therefore, breaking a frame down into rows provides the opportunity of \textit{vectorising} the application by encrypting each row of a frame as a single ciphertext object. This has the advantage of reducing the number of ciphertext objects needed – for an $n \times m$ pixel frame, the number of objects is reduced from $nm$ to $n$ - so reduces the memory consumption and significantly improving transmission time\footnote{This would fall under concurrency rather than parallelism because objects such as encoders, encryptors, and keys must be shared between processes.}.
+In a na\"ive implementation, each video pixel might be packed individually. However, this can be improved. The CKKS scheme operates on vectors of real values. Therefore, decomposing a frame into rows provides the opportunity for \textit{vectorising} the application by encrypting each row as a single ciphertext object. Consequently, the number of ciphertexts needed is reduced - for an $n \times m$ pixel frame, the number of objects is reduced from $nm$ to $n$ - so the time and space complexity of encryption is reduced from quadratic to linear complexity\footnote{This would fall under concurrency rather than parallelism because objects such as encoders, encryptors, and keys must be shared between processes.}.
 \smallskip \\ \indent
-Similarly, compressing and serialising subsections of a video rather than the whole video does not change the outcome but has the advantage of being parallelisable. Therefore, once encryption has been complete, these operations can be performed in the same thread, without having any disadvantages of requiring more threads to be created. The functions are only limited in their need for the previous stage to entirely terminate before they can begin. Consequently, the smaller the quantum of data they operate on, the quicker they will finish. However, the same concerns that occur during data transmission also occur here. That is, the overhead of creating threads must be balanced against reducing the decomposition of data.
+Similarly, compressing and serialising subsections of video can be parallelised to improve time and space complexity. Therefore, once encryption has completed, these operations can be performed by the same thread. No further overhead of thread creation is required, so this improvement is only limited by the need for each stage to terminate entirely before the next begins. Consequently, the smaller the quantum of data they operate on, the quicker they will complete. However, smaller quanta requires more threads, so a similar balance to that described in §\ref{sec:communication} must be achieved.
 
 \setlength{\leftskip}{0cm}
 
@@ -578,22 +498,22 @@ Similarly, compressing and serialising subsections of a video rather than the wh
 \label{sec:inference}
 \setlength{\leftskip}{0.25cm}
 \indent \indent
-This section discusses the implementation of the inference models required for moving object detection. It will examine the necessary modifications to support HE video data and detail the more complex algorithms needed for unsupervised learning. Adaptations were required to incorporate the HE Boolean circuits and overcome operation depth limitations. The more straightforward adjustments are summarised in §\ref{sec:adaptations}, and the investigations into GMMs are given a more in-depth presentation in §\ref{sec:OMM} and §\ref{sec:EMAlg}.
+This section discusses the implementation of the moving object detection algorithms. It will examine the necessary modifications to support HE video data in §\ref{sec:adaptations}, and detail the more complex algorithms needed for unsupervised learning in §\ref{sec:OMM} and §\ref{sec:EMAlg}. Adaptations were required to incorporate the HE Boolean circuits and overcome operation depth limitations. 
 
 \setlength{\leftskip}{0cm}
 \subsection{Homomorphic Encryption Adaptations}
 \label{sec:adaptations}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-There were two main challenges to overcome when converting inference algorithms to the HE domain. Firstly, the number of operations that can be applied is limited by the depth of the ciphertext. Secondly, the set of operations supported by CKKS is more limited than is available when working with plain data. Consequently, algorithms needed to be modified, and compromises made to produce accurate results without introducing detrimental side effects - for example, to accommodate more operations, the depth of a ciphertext could be increased, but this significantly increases the memory usage of ciphertexts, so data transmission quickly becomes infeasible.
+There were two main challenges to overcome when implementing inference algorithms in the HE domain. Firstly, the number of operations that can be applied is limited by the depth of the ciphertext. Secondly, the set of operations supported by HE is more limited than is available when working with plain data. Consequently, compromises were made to produce accurate results without introducing detrimental side effects - for example, to accommodate more operations, the depth of a ciphertext could be increased, but this significantly increases the memory usage of ciphertexts, so data transmission quickly becomes infeasible.
 \smallskip \\ \indent
-The adaptations required for each of the less complex algorithms are detailed below. A discussion of the techniques investigated for implementing GMMs is left to §\ref{sec:integration}, where more time can be given to an in-depth analysis.
+The adaptations implemented for the less complex algorithms are detailed below. A discussion of the techniques investigated for implementing GMMs is evaluated in §\ref{sec:integration}.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Frame Differencing}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Frame differencing is a relatively simple algorithm to adapt for the HE domain. It only requires a single operation, \textit{subtraction}, that is provided by the standard CKKS implementation. Moreover, subtraction does not require a ciphertext to be rescaled. As such, its level is never decreased, so the size of the ciphertext can be minimised. As well as making networking more efficient, this also makes the inference algorithm faster because the data being operated over is smaller.
+Frame differencing is a relatively simple algorithm to adapt for the HE domain. It only requires a single operation, \textit{subtraction}, that is provided by the standard CKKS implementation. Moreover, subtraction does not impact the level of a ciphertext, so has no impact on ciphertext size. As well as making networking more efficient, this also makes the inference algorithm faster because the data being operated over is smaller.
 \smallskip \\ \indent
 Therefore, the only modification required to operate over HE data is to replace the subtraction function in the traditional algorithm with a call to the subtraction circuit provided by the HE library.
 
@@ -602,16 +522,17 @@ Therefore, the only modification required to operate over HE data is to replace 
 \subsubsection{Mean Filter}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-The traditional mean filter algorithm has two standard implementation versions. One option is to calculate the mean from scratch every time. To do this, a list of all frames that have been observed so far must be stored; then, when a new frame is received, it can be added. From this, the pixels can be summed and divided by the size of the list to provide an array of mean values in the same shape as the video frames. In contrast, the second version does not require storing all previous frames. Instead, the mean frame is updated using an iterative formula every time a new frame is received.\smallskip \\ \indent
-It is obvious that the second method will perform better in both time and space complexity than the first when considering plain video data. However, when investigating HE data, the distinction is not as straightforward. The second method becomes problematic in that the mean must have both \textit{multiplication} and \textit{addition} operations applied to it during the updating phase. Each time a multiplication circuit is applied, the ciphertext will be reduced. Therefore, the ciphertext must have the same number of levels as frames in the video. This quickly becomes infeasible. Increasing the size of ciphertext as far as would be required would significantly detriment the time complexity of the operations. Likewise, it would also make transmitting data between client and server much slower. Consequently, this method can be immediately ruled out.
+The most straightforward implementation recalculates the reference frame repeatedly by storing a list of all frames that have been observed and finding their mean each time a new frame is received. In contrast, a more advanced implementation will use an iterative function to update the mean, so does not require storing all frames.
 \smallskip \\ \indent
-The first method encounters different difficulties. One particular issue is the space complexity of storing all frames in the video. Since HE data can get very large, storing multiple copies of each frame significantly impacts the application's memory usage. Similarly, HE operations are noticeably slower than plaintext operations. Therefore, while the number of frames to be handled may not significantly impact the running time of plaintext implementations, as the video progresses, a HE implementation will become considerably slower. However, this method can be used to derive a solution. A compromise can be achieved by setting an upper bound on the number of preceding frames stored and forgetting the oldest frame whenever a new one arrives. Significantly, this may reduce the accuracy of moving object detection, so a balance must be struck between running time and inference quality.
+Evidently, the second method will perform better in both time and space complexity when considering plain video data. However, when investigating HE data, the distinction is not as clear. The second method becomes problematic in that the mean must have both \textit{multiplication} and \textit{addition} operations applied to it during the updating phase. Each time a multiplication circuit is applied, the ciphertext will be reduced. Therefore, the ciphertext must have the same number of levels as frames in the video. This quickly becomes infeasible because increasing ciphertext size so far would severely increase the time complexity of operations and make transmission times impracticably slow. Consequently, this method can be immediately ruled out
+\smallskip \\ \indent
+The first method encounters different difficulties. One particular issue is the space complexity of storing all frames in the video. Since HE data can get very large, storing multiple copies of each frame significantly impacts the application's memory usage. Similarly, HE operations are noticeably slower than plaintext operations. Therefore, while the cost of recalculating the mean of plaintext data may be relatively negligible, as more frames are observed, HE implementations will become considerably slower. However, this method can be used to derive a solution. A compromise can be achieved by limiting the number of frames stored, forgetting the oldest frame whenever a new one arrives. Importantly, this may reduce inference accuracy, so a balance must be struck between running time and inference quality.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Gaussian Average}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Similarly to one of the methods proposed for implementing mean filter inference, the mean and variance values required to fit the Gaussian distributions are calculated iteratively using Equation \ref{eq:mean2} and Equation \ref{eq:variance2} (also given by Equation \ref{eq:mean} and Equation \ref{eq:variance}).
+Similarly to a mean filter, a plaintext implementation of Gaussian average inference would fit the Gaussian distributions using iterative formulae for the mean and variance. Copied from §\ref{sec:gaussianAverage} for convenience, Equation \ref{eq:mean2} and Equation \ref{eq:variance2} provide these formulae. Consequently, the plaintext implementation will be infeasible in the HE domain. Fortunately, it can be adapted.
 \begin{equation}
     \label{eq:mean2}
     \mu_t =
@@ -630,9 +551,7 @@ Similarly to one of the methods proposed for implementing mean filter inference,
 \end{equation}
 where $\alpha$ determines the size of the temporal window, $d = |f_t - \mu_t|$ represents the Euclidean distance between a pixel and the mean, and $c$ is some constant.
 \smallskip \\ \indent
-Consequently, using these definitions, a Gaussian average inference implementation will be equally infeasible as the mean filter implementation. Fortunately, the implementation can be adapted to reduce the number of applications of multiplication required.   
-\smallskip \\ \indent
-The first step of the adaptation requires the observation that expanding the iterative definitions of the mean and variance highlights that the frames of the video are \textit{multiplicatively independent} of each other - in other words, the frames are multiplied by a constant value, and then they are added together. This is demonstrated in Equation \ref{eq:expansion} for the fifth frame of the video.
+Firstly, it can be observed that expanding the iterative formulae highlights that the frames of a video are \textit{multiplicatively independent}, as demonstrated by Equation \ref{eq:expansion} for the fifth frame of the video.
 \begin{equation}
     \label{eq:expansion}
     \begin{split}
@@ -641,17 +560,16 @@ The first step of the adaptation requires the observation that expanding the ite
     \end{split}
 \end{equation}
 \indent
-Interestingly, the coefficient terms for each frame are identical, so the computation can be shared across both calculations. More importantly, the value of $\alpha$ is predetermined, decided by the server before runtime to weight frames according to recency. Consequently, the coefficients can be pre-calculated in the clear before being encoded for HE multiplication. This means that only a single multiplication needs to be applied to each frame before the results can be summed to give the means and variances. Therefore, the number of levels required for a ciphertext is minimised, so the ciphertext size is minimised.
+Helpfully, the coefficient terms across calculations are identical, so computation can be shared. More importantly, the server decides the value of $\alpha$ before runtime. Therefore, the coefficients can be pre-calculated in the clear before being encoded for HE multiplication. This means that only a single multiplication needs to be applied to each frame. Then, results can be summed to give the mean and variance. Consequently, the number of levels required for a ciphertext is significantly reduced, so time and space complexity are also reduced.
 \smallskip \\ \indent
-However, it must be noted that this is assuming each frame is known. Therefore, a list of preceding frames must be stored so that each formulae can be recalculated entirely each time a new frame is received. Like with a mean filter, this introduces the trade-off of running time against inference accuracy, as increasing the number of frames stored will make the results of inference more accurate but will take longer to calculate as more multiplications will have to be performed each time.
-
+However, this method still requires storing a list of preceding frames to recalculate terms repeatedly. Like with mean filter, this introduces a trade-off between running time and memory usage against inference accuracy.
 
 \setlength{\leftskip}{0cm}
 \subsection{Online Mixture Model}
 \label{sec:OMM}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-In 1999 Stauffer and Grimson proposed \textit{adaptive background mixture models} for real-time moving object detection ~\cite{Stauffer}. To overcome a single Gaussian distribution's inability to cope with the changing lighting conditions in practice, they proposed a mixture of adaptive Gaussians. For each frame of the video, the parameters of the Gaussians are updated, and they are heuristically evaluated to hypothesise which are most likely part of the \textit{background process}. The advantage of this technique over other GMMs is that the model runs \textit{online}. Consequently, no training phase is required. Instead, the model can be fitted, and results returned in a single phase. While this is useful for real-time inference acting on a constant stream of data, it has the disadvantage of producing less accurate results earlier in the execution sequence.
+In 1999 Stauffer and Grimson proposed \textit{adaptive background mixture models} for real-time moving object detection ~\cite{Stauffer}. To overcome a single Gaussian distribution's inability to cope with the changing lighting conditions in practice, they proposed a mixture of adaptive Gaussians. The advantage of this technique over other GMMs is that the model runs \textit{online} because no training phase is required. Instead, the model can be fitted, and results returned in a single phase. While this is useful for real-time inference acting on a constant stream of data, it has the disadvantage of producing less accurate results earlier in the execution sequence.
 
 \setlength{\leftskip}{0cm}
 \subsubsection{Fitting}
@@ -664,9 +582,7 @@ For a particular pixel, the values that occur over time are known as the \textit
 \end{equation}
 where $I$ is the image sequence.
 \smallskip \\ \indent
-Many guiding factors influence the definition of the model and updating procedure. For example, lighting changes must be tracked, static objects added to the scene must be incorporated into the background, and no camera sensor is perfect, so random noise in pixel values must be ignored. From these factors, it can be deduced that more recent observations will be more useful when determining Gaussian parameter estimates.
-\smallskip \\ \indent
-The recent history of a pixel can be modelled as a mixture of $K$ Gaussian distributions. $K$ is usually a value between 3 and 5, depending on available memory and computational power availability. Given a pixel process, the probability of observing the pixel value at time $t$ is given by
+The history of a pixel can be modelled as a mixture of $K$ Gaussian distributions. $K$ is usually a value between 3 and 5, depending on available memory and computational power availability. Given a pixel process, the probability of observing the pixel value at time $t$ is given by
 \begin{equation}
     \probP (X_t) = \sum^K_{i=1} \omega_{i,t} \times \eta(X_t, \mu_{i,t}, \Sigma_{i,t})
 \end{equation}
@@ -676,9 +592,9 @@ where $\omega_{i,t}$ represents an estimate of the proportion of the data accoun
     \eta (X, \mu, \Sigma) = \frac{1}{(2\pi)^\frac{n}{2} |\Sigma|^\frac{1}{2}} e^{-\frac{1}{2} (X - \mu)^T \Sigma^{-1} (X - \mu)}
 \end{equation}
 \indent
-Rather than using the \textit{expectation maximisation algorithm} (see §\ref{sec:EMAlg} for more information) to maximise the likelihood of the observed data, Stauffer and Grimson suggested using a \textit{K-means} approximation to engender the online aspect of the system. Each pixel in a new frame is compared against the existing $K$ Gaussian distributions until a \textit{match} is found. A match occurs when a pixel value is within a predefined number of standard deviations of a distribution. The number of standard deviations will vary across distributions as each distribution will account for different factors such as lighter or shadier regions. 
+To maximise the likelihood of the observed data, a \textit{k-means} approximation was selected to engender the online aspect of the system. Each pixel in a new frame is compared against the existing $K$ Gaussian distributions until a \textit{match} is found. A match occurs when a pixel value is within a predefined number of standard deviations of a distribution. The number of standard deviations will vary across distributions as each distribution will account for different factors such as lighter or shadier regions. 
 \smallskip \\ \indent
-In the event that none of the distributions match a pixel's value, the least likely Gaussian is replaced by a new distribution defined with the pixel value as its mean, an initially high variance, and low prior weight. Then, the prior weights are adjusted at time $t$ using Equation \ref{eq:priors}.
+If none of the distributions match a pixel's value, the least likely Gaussian is replaced by a new distribution defined with the current value as its mean, an initially high variance, and low prior weight. Then, the prior weights are adjusted at time $t$ using Equation \ref{eq:priors}.
 \begin{equation}
     \label{eq:priors}
     \omega_{k,t} = (1-\alpha)\omega_{k,t-1} + \alpha M_{k,t}
@@ -704,9 +620,9 @@ For unmatched distributions, the $\mu$ and $\sigma$ parameters are unchanged. Ho
 \subsubsection{Predicting}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Once the parameters have been updated, the Gaussian most likely produced by the background process must be determined to segment the foreground and background. This decision is based on the assumption that there will be a relatively little variance in the Gaussian distributions when a static, persistent object is in the frame. In contrast, when a new object occludes the background, it will generate significant variance and not match an existing distribution. Consequently, a method of defining the proportion of the GMM representing the background process is required.
+Once the parameters have been updated, each pixel must be labelled by determining the Gaussian component most likely produced by the background process. This decision assumes that there will be relatively little variance in the Gaussians when a static object is in the frame and a large variance not matching existing distributions when a new object occludes the background. Consequently, a method defining the proportion of the GMM representing the background process is required.
 \smallskip \\ \indent
-To achieve this, first, the Gaussians are ordered based on the value of $\frac{\omega}{\Sigma}$. The definitions of $\omega$ and $\Sigma$ mean that this value will increase as both the distribution gains more evidence and the variance decreases. This value will only differ from the last iteration for matching distributions, so the sorting process can be made more efficient. The ordered list can then be iterated over, and the first $B$ distributions are taken as the \textit{background model}, where
+To achieve this, first, the Gaussians are ordered based on the value of $\frac{\omega}{\Sigma}$. The definitions of $\omega$ and $\Sigma$ mean that this value will increase as the distribution gains more evidence and the variance decreases. This value will only differ from the last iteration for matching distributions, so the sorting process can be made more efficient. The ordered list can then be iterated over, and the first $B$ distributions are taken as the \textit{background model}, where 
 \begin{equation}
     \label{eq:gmmInequality}
     B = argmin_b \left( \sum^b_{k=1} \omega_k > T \right)
@@ -720,7 +636,7 @@ Once the background model has been decided, it can be used to label the pixel as
 \label{sec:EMAlg}
 \setlength{\leftskip}{0.5cm}
 \indent \indent
-Proposed by Dempster et al.\ in 1977, the \textit{expectation-maximisation} (EM) algorithm is a general iterative method for maximising the likelihood of \textit{latent variables} using a statistical model ~\cite{Dempster}. There are two stages in the algorithm: the expectation stage, or \textit{E-step}, and the maximisation stage, or \textit{M-step}, which are iterated over until the model converges. The E-step generates a function for the expectation of the likelihood of the data points occurring given the current model parameters. The M-step computes new parameters to maximise the function found in the E-step. While this will always increase the \textit{marginal likelihood function}, there is no guarantee that the EM algorithm will converge to a maximum likelihood estimator. For example, the algorithm may converge on a local maximum. To overcome this, techniques such as \textit{random-restart hill climbing} can be employed ~\cite{HillClimbing}.
+Proposed by Dempster et al.\ in 1977, the \textit{expectation-maximisation} (EM) algorithm is a general iterative method for maximising the likelihood of \textit{latent variables} of a statistical model ~\cite{Dempster}. There are two stages in the algorithm: the expectation stage, or \textit{E-step}, and the maximisation stage, or \textit{M-step}, which are iterated over until the model converges. The E-step generates a function for the expectation of the likelihood of data points occurring given the current model parameters. The M-step computes new parameters to maximise the function found in the E-step. While this will always increase the \textit{marginal likelihood function}, there is no guarantee that the EM algorithm will converge to a maximum likelihood estimator: the algorithm may converge on a local maximum. To overcome this, techniques such as \textit{random-restart hill climbing} can be employed ~\cite{HillClimbing}.
 \smallskip \\ \indent
 Although the EM algorithm can be applied to any statistical model, this dissertation will discuss its application to GMMs. The algorithm can be used to assign observed data points to components of the model such that the likelihood of the components generating the points is maximised. When applied to a GMM, the E-step can be formalised by the below process. To begin with, the \textit{pseudo-posterior} - the probability that an observation, $X_i$ belongs to a component $Z_k$  - is calculated using Equation \ref{eq:eStep1}.
 \begin{align}
@@ -763,6 +679,21 @@ From this, the optimal parameter values can be derived by differentiating Equati
     \label{eq:mStep5}
     \hat{\omega}_k = \frac{N_k}{N}
 \end{equation}
+
+
+\setlength{\leftskip}{0cm}
+
+
+
+
+\section{Summary}
+\setlength{\leftskip}{0.25cm}
+\indent \indent
+Overall, the project's implementation stage began with a foundational implementation of a client-server stack, followed by the integration of Microsoft's SEAL library to allow HE data transmission, satisfying the first core success criterion. After this, an investigation into the optimisation of the network stack involving the implementation of a \textit{seam carving} algorithm and \textit{graph representations} of images to reduce the size of videos and \textit{parallelisation} to increase the transmission rate between client and server.
+\smallskip \\ \indent
+The following implementation stage required inference algorithms to be converted to the HE domain to satisfy the second core success criterion. As part of this, several modifications had to be made to the algorithms, and investigations had to be conducted into implementing more HE Boolean circuits. 
+\smallskip \\ \indent
+Finally, a bespoke HE scheme was implemented from first principles following the CKKS scheme initially integrated. This allowed further understanding and an investigation into specialising the implementation as an opportunity for optimisation.
 
 
 \setlength{\leftskip}{0cm}
