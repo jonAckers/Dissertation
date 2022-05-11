@@ -2,34 +2,31 @@
 \label{chap:conclusions}
 
 \section{Project Summary}
-\setlength{\leftskip}{0.25cm}
 \indent \indent
-Overall, the project was a success. All core success criteria and one of the extensions were met, and the remaining criteria were thoroughly considered. In its final state, the project contains an investigation into the applicability of HE in ensuring user privacy is preserved when using modern MLaaS surveillance technology. For this, a client-server system allowing data to be homomorphically encrypted using the CKKS scheme and transferred across a network was implemented. Moreover, several background subtraction algorithms were implemented, and more were investigated to attempt to find the limit of HE pertinency. Also, the results of these algorithms were evaluated to compare to traditional algorithms that operate on plaintext data. Furthermore, a bespoke implementation of the CKKS scheme - called MeKKS - was created to increase understanding and highlight opportunities for application-specific optimisations.
+Overall, the project was a success. All core success criteria and one of the extensions were met, and the remaining extensions were thoroughly considered. In its final state, the project contains a novel investigation into the applicability of HE in ensuring user privacy is preserved when using modern MLaaS surveillance technology. For this, a client-server system allowing data to be homomorphically encrypted and transferred across a network was implemented. Moreover, several background subtraction algorithms were implemented, and more were investigated to attempt to find the limit of HE pertinency. Also, the results of these algorithms were evaluated against traditional algorithms operating on plain data, revealing similar accuracy but significantly increased running time due to increased computational complexity. Similarly, network activity was compared between plain and encrypted data, highlighting the cost of increased ciphertext size through increased data manipulation running times and transmission times between client and server.   Furthermore, a bespoke implementation of the CKKS scheme - called MeKKS - was created to increase understanding and highlight opportunities for application-specific optimisations.
 
-\setlength{\leftskip}{0cm}
+
 
 
 
 
 
 \section{Lessons Learned}
-\setlength{\leftskip}{0.25cm}
 \indent \indent
-Throughout the project, many challenges were faced. The most critical of these challenges was the requirement for research to cultivate the background knowledge of both unsupervised machine learning for image segmentation and HE - neither of which were covered in Tripos content. Specifically concerning HE, lack of documentation regarding scheme applications warranted many hours of literature reviews and deciphering research papers. 
+Throughout the project, many challenges were faced. The project investigated a novel integration of HE and unsupervised machine learning for image segmentation - neither of which are covered by Tripos content. Consequently, the most critical challenge was the need for research to cultivate background knowledge. However, there was little overlap between these topics found in published work, so significant time had to be invested in deriving potential solutions to encountered problems. Specifically concerning HE, lack of documentation regarding scheme applications warranted many hours of literature reviews and deciphering research papers. 
 \smallskip \\ \indent
-Furthermore, computations using machine learning and HE took a long time to execute - particularly when networking was involved. Consequently, debugging and evolving algorithms was a time-consuming process. This made strategic time management even more critical to allow enough time to complete a thorough investigation. However, these challenges did make the project a productive learning experience that will be helpful when exploring other areas of computer science in future or when working on any large projects generally.
+Furthermore, computations using machine learning and HE took a long time to execute - particularly when networking was involved. Consequently, debugging and evolving algorithms was a time-consuming process. This made time management even more critical to allow enough time to complete a thorough investigation. However, these challenges did make the project a productive learning experience that will be helpful when exploring other areas of computer science in future or when working on any large projects generally.
 
-\setlength{\leftskip}{0cm}
+
 
 
 
 
 
 \section{Future Directions}
-\setlength{\leftskip}{0.25cm}
 \indent \indent
-The project encountered two recurring limitations that would benefit from further investigation. Firstly, the memory requirements enforced by HE result in a significant bottleneck during the networking stage of the application. Consequently, the practicality of HE for overcoming privacy concerns in MLaaS models is severely limited. To overcome this, either the number of levels in a ciphertext needed to perform consecutive multiplications will need to be reduced, or more realistically, the impact of adding a new level on the size of a ciphertext must be made more affordable.
+The project encountered two recurring limitations of HE that would benefit from further investigation. Firstly, the memory requirements resulting from ciphertext size resulted in a significant bottleneck during the networking stage of the application. Consequently, research into reducing this cost would make HE more applicable to MLaaS applications. Secondly, the variety of operations available in the HE domain must be expanded if more advanced moving object detection algorithms are to be implemented. This would enable GMMs to produce much more accurate inference results.
 \smallskip \\ \indent
-Secondly, the variety of operations that can be performed on HE ciphertexts must be expanded if more advanced moving object detection algorithms are to be implemented. Even relatively simple operations such as division are lacking from the CKKS scheme, which means either new inference algorithms will need to be developed or the HE schemes will need to be extended to be more supportive.
-
-\setlength{\leftskip}{0cm}
+Regarding security, other methods could be investigated to preserve privacy. For example, techniques exist for storing private keys in hardware to prevent visibility to users ~\cite{Lorch}. This would reduce the risk of malicious actors performing unauthorised access. Moreover, \textit{functional cryptography} is an asymmetric cryptographic protocol that allows properties of ciphertexts to be extracted ~\cite{Boneh}. An investigation into this could produce a potential alternative to HE, and compare the advantages and disadvantages of the two approaches.
+\smallskip \\ \indent
+More specifically for surveillance applications, further research considering the hardware aspect of the problem would be beneficial for obtaining a more precise measure of practicality. Some potential topics include: evaluating and reducing energy usage to accommodate battery-powered devices, improving computational complexity for execution on lower-powered processors, or developing specialised accelerators to design devices specific to HE computations. 

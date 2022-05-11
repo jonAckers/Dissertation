@@ -2,7 +2,6 @@
 
 \section{Group Theory}
 \label{app:groups}
-\setlength{\leftskip}{0.25cm}
 \indent \indent
 The RLWE problem used by the CKKS encryption scheme considers the mathematical objects, \textit{rings}. To understand \textit{rings}, \textit{groups} must first be understood. A group $(\mathbb{G}, \bullet)$ is a set, $\mathbb{G}$, and an operator, $\bullet: \mathbb{G} \times \mathbb{G} \rightarrow \mathbb{G}$, such that the following properties hold:
 \begin{itemize}
@@ -20,42 +19,3 @@ From this, a \textit{ring} is defined as $(\textbf{R}, \boxplus, \boxtimes)$, wh
     \item $\boxplus$ and $\boxtimes$ are distributive - for all $a, b, c \in \textbf{R}$, $a \boxtimes (b \boxplus c) = (a \boxtimes b) \boxplus (a \boxtimes c)$ and $(a \boxplus b) \boxtimes c = (a \boxtimes c) \boxplus (b \boxtimes c)$.
 \end{itemize}
 If $a \boxtimes b = b \boxtimes a$ then it is a \textbf{commutative} ring, but this is not necessary for rings generally. One example of a ring is $(\mathbb{Z}[x], +, \times)$.
-
-\setlength{\leftskip}{0cm}
-
-
-
-
-
-\section{CKKS Operations}
-\label{app:operations}
-\setlength{\leftskip}{0.25cm}
-\indent \indent
-Figure \ref{fig:ckksOps} lists the operations supported by CKKS and their definitions. An important observation is the multiplication of polynomials required during ciphertext multiplication. This makes multiplication a much more computationally expensive operation than addition.
-
-\begin{figure}[ht]
-    \centering
-    \begin{tcolorbox}
-        \begin{itemize}[leftmargin=0.1cm]
-            \item \texttt{KeyGen} : sample $s \leftarrow \chi_{\text{key}}$, $\vec{r}' \rightarrow \mathcal{R}_{qL}$, $\vec{r}' \rightarrow \mathcal{R}_{P \cdot qL}$, $\vec{e} \leftarrow \chi_{\text{err}}$, and $\vec{e}' \leftarrow \chi_{\text{err}}$.
-            \begin{enumerate}
-                \item Calculate $\vec{a} := - \vec{r} \vec{s} + \vec{e} \mod q_L$ and $\vec{a}' := -\vec{r}' \vec{s} + \vec{e}' + P \vec{s}^2 \mod P \cdot qL$.
-                \item Return $\texttt{SecretKey} := (1, \vec{s})$, $\texttt{PublicKey} := (\vec{a}, \vec{r})$, $\texttt{EvaluationKey} := (\vec{a}', \vec{r}')$.
-            \end{enumerate}
-            \item $\texttt{Enc}_\texttt{PublicKey}(\vec{m})$ : sample $\vec{v} \leftarrow \chi_{\text{enc}}$ and $\vec{e}_0, \vec{e}_1 \leftarrow \chi_{\text{err}}$.
-            \begin{enumerate}
-                \item Calculate $\vec{c}_0 := \vec{v} \cdot \vec{a} + \vec{m} + \vec{e}_0$ and $\vec{c}_1 := \vec{v} \cdot \vec{r} + \vec{e}_1$.
-                \item Return $(\vec{c}_0, \vec{c}_1) \mod q_L$.
-            \end{enumerate}
-            \item $\texttt{Dec}_\texttt{SecretKey}(\vec{c}_0 + \vec{c}_1 \cdot \vec{s}) = (\vec{c}_0 + \vec{c}_1) \mod q_l$.
-            \item $\texttt{Add}((\vec{c}_0, \vec{c}_1), (\vec{d}_0, \vec{d}_1)) = (\vec{c}_0 + \vec{d}_0, \vec{c}_1 + \vec{d}_1) \mod q_l$.
-            \item $\texttt{AddPlain}((\vec{c}_0, \vec{c}_1), x) = (c_0 + \texttt{Enc}_\texttt{PublicKey}(x), \vec{c}_1) \mod q_l$.
-            \item $\texttt{Multiply}((\vec{c}_0, \vec{c}_1), (\vec{d}_0, \vec{d}_1)) = (\vec{r}_0, \vec{r}_1) + (\lfloor P^{-1} \cdot \vec{r}_2 \cdot \texttt{EvaluationKey}_0 \rceil, \lfloor P^{-1} \cdot \vec{r}_2 \cdot \texttt{EvaluationKey}_1  \rceil) \mod q_l$.
-            \item $\texttt{MultiplyPlain}((\vec{c}_0, \vec{c}_1), x) = (\vec{c}_0 \cdot \texttt{Enc}_\texttt{PublicKey}(x), \vec{c}_1 \cdot \texttt{Enc}_\texttt{PublicKey}(x)) \mod q_l$.
-        \end{itemize}
-    \end{tcolorbox}
-    \caption[CKKS Operations]{A list of the basic operations supported by the CKKS scheme. $P$ is a large scaling factor and $\lfloor \cdot \rceil$ denotes rounding to the nearest integer. Recreated from \cite{CKKS}.}
-    \label{fig:ckksOps}
-\end{figure}
-
-\setlength{\leftskip}{0cm}
